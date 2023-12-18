@@ -16,8 +16,7 @@ import net.neoforged.fml.loading.FMLEnvironment;
 @Mod(Reference.MOD_ID)
 public class ModNeoForge {
 	
-	public ModNeoForge() {
-		IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+	public ModNeoForge(IEventBus modEventBus) {
 		modEventBus.addListener(this::loadComplete);
 
 		setGlobalConstants();
