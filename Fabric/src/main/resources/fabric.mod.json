@@ -1,15 +1,15 @@
 {
   "schemaVersion": 1,
   "id": "treeharvester",
-  "version": "8.3",
+  "version": "8.4",
 
   "name": "Tree Harvester",
   "description": "Harvest (nether) trees and giant mushrooms instantly with fast leaf decay and sapling replacement.",
   "authors": [ "Rick South" ],
   "contact": {
-    "homepage": "https://curseforge.com/minecraft/mc-mods/tree-harvester",
-    "sources": "https://github.com/ricksouth/serilum-mc-mod-sources/tree/main/sources/Tree%20Harvester",
-    "issues": "https://github.com/ricksouth/serilum-mc-mods/labels/Mod:%20Tree%20Harvester"
+    "homepage": "https://serilum.com/mod/tree-harvester",
+    "sources": "https://github.com/Serilum/Tree-Harvester",
+    "issues": "https://github.com/Serilum/.issue-tracker/labels/Mod:%20Tree%20Harvester"
   },
 
   "license": "All Right Reserved",
@@ -23,7 +23,7 @@
     "fabric": "*",
     "minecraft": ">=1.20",
     "java": ">=17",
-    "collective": ">=7.13"
+    "collective": ">=7.21"
   },
 
   "custom": {

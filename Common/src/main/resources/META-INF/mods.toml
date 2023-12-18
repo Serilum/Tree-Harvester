@@ -1,14 +1,14 @@
 modLoader="javafml"
 loaderVersion="*"
 license="All rights reserved"
-issueTrackerURL="https://github.com/ricksouth/serilum-mc-mods/labels/Mod:%20Tree%20Harvester"
+issueTrackerURL="https://github.com/Serilum/.issue-tracker/labels/Mod:%20Tree%20Harvester"
 logoFile="icon.png"
 
 [[mods]]
 modId="treeharvester"
-version="8.3"
+version="8.4"
 displayName="Tree Harvester"
-displayURL="https://curseforge.com/minecraft/mc-mods/tree-harvester"
+displayURL="https://serilum.com/mod/tree-harvester"
 authors="Rick South"
 description='''Harvest (nether) trees and giant mushrooms instantly with fast leaf decay and sapling replacement.
 '''
@@ -21,13 +21,15 @@ If you would like to contribute too, check out https://ricksouth.com/donate. App
 
 [[dependencies.treeharvester]]
     modId="collective"
+    type="required"
     mandatory=true
-    versionRange="[7.13,)"
+    versionRange="[7.21,)"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.treeharvester]]
     modId="minecraft"
+    type="required"
     mandatory=true
     versionRange="[1.20.4]"
     ordering="NONE"
