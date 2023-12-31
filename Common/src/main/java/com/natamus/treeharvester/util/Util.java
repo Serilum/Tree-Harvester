@@ -15,7 +15,12 @@ import java.util.List;
 
 public class Util {
 	public static boolean isTreeLog(Block block) {
-		return (CompareBlockFunctions.isTreeLog(block) || isGiantMushroomStemBlock(block) || isTreeRoot(block)) && !block.getName().getString().toLowerCase().contains("stripped");
+		try {
+			return (CompareBlockFunctions.isTreeLog(block) || isGiantMushroomStemBlock(block) || isTreeRoot(block)) && !block.getName().getString().toLowerCase().contains("stripped");
+		}
+		catch (IllegalArgumentException ignored) { // Fixes mod incompatibility.
+			return false;
+		}
 	}
 	public static boolean isTreeLeaf(Block block) {
 		return CompareBlockFunctions.isTreeLeaf(block, ConfigHandler.enableNetherTrees) || isGiantMushroomLeafBlock(block);
