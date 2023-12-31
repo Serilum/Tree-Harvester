@@ -1,9 +1,8 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "com.natamus.treeharvester.forge.mixin",
+  "package": "com.natamus.treeharvester.mixin",
   "compatibilityLevel": "JAVA_17",
-  "refmap": "treeharvester_forge.refmap.json",
   "mixins": [
 
   ],
