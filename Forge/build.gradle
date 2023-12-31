@@ -9,8 +9,8 @@ base {
 }
 
 mixin { // mixin
-    add sourceSets.main, "treeharvester_forge.refmap.json" // mixin
-    config 'treeharvester_forge.mixins.json' // mixin
+    add sourceSets.main, "treeharvester.refmap.json" // mixin
+    config 'treeharvester.mixins.json' // mixin
     
     debug.verbose = true // mixin
     debug.export = true // mixin
@@ -31,7 +31,7 @@ minecraft {
     runs {
         client {
             workingDirectory project.file('run')
-            arg "-mixin.config=treeharvester_forge.mixins.json" // mixin
+            arg "-mixin.config=treeharvester.mixins.json" // mixin
 
             ideaModule "${rootProject.name}.${project.name}.main"
             taskName 'Client'
@@ -47,7 +47,7 @@ minecraft {
 
         server {
             workingDirectory project.file('run')
-            arg "-mixin.config=treeharvester_forge.mixins.json" // mixin
+            arg "-mixin.config=treeharvester.mixins.json" // mixin
 
             ideaModule "${rootProject.name}.${project.name}.main"
             taskName 'Server'
@@ -63,7 +63,7 @@ minecraft {
 
         data {
             workingDirectory project.file('run')
-            arg "-mixin.config=treeharvester_forge.mixins.json" // mixin
+            arg "-mixin.config=treeharvester.mixins.json" // mixin
             
             ideaModule "${rootProject.name}.${project.name}.main"
             args '--mod', mod_id, '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')

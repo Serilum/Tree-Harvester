@@ -6,7 +6,7 @@ logoFile="icon.png"
 
 [[mods]]
 modId="treeharvester"
-version="8.4"
+version="8.5"
 displayName="Tree Harvester"
 displayURL="https://serilum.com/mod/tree-harvester"
 authors="Rick South"
@@ -23,7 +23,7 @@ If you would like to contribute too, check out https://ricksouth.com/donate. App
     modId="collective"
     type="required"
     mandatory=true
-    versionRange="[7.21,)"
+    versionRange="[7.30,)"
     ordering="NONE"
     side="BOTH"
 
@@ -36,4 +36,4 @@ If you would like to contribute too, check out https://ricksouth.com/donate. App
     side="BOTH"
 
 [[mixins]]
-    config = "treeharvester_neoforge.mixins.json"
+    config = "treeharvester.mixins.json"

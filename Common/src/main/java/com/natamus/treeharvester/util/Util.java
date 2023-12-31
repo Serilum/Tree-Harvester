@@ -14,7 +14,12 @@ import java.util.List;
 
 public class Util {
 	public static boolean isTreeLog(Block block) {
-		return (CompareBlockFunctions.isTreeLog(block) || isGiantMushroomStemBlock(block) || isTreeRoot(block)) && !block.getName().getString().toLowerCase().contains("stripped");
+		try {
+			return (CompareBlockFunctions.isTreeLog(block) || isGiantMushroomStemBlock(block) || isTreeRoot(block)) && !block.getName().getString().toLowerCase().contains("stripped");
+		}
+		catch (IllegalArgumentException ignored) { // Fixes mod incompatibility.
+			return false;
+		}
 	}
 	public static boolean isTreeLeaf(Block block) {
 		return CompareBlockFunctions.isTreeLeaf(block, ConfigHandler.enableNetherTrees) || isGiantMushroomLeafBlock(block);
@@ -43,7 +48,7 @@ public class Util {
 			return false;
 		}
 		MapColor materialcolour = block.defaultMapColor();
-		return block instanceof HugeMushroomBlock && (materialcolour.equals(MapColor.COLOR_BROWN) || materialcolour.equals(MapColor.COLOR_RED));
+		return block instanceof HugeMushroomBlock && (materialcolour.equals(MapColor.COLOR_RED) || materialcolour.equals(MapColor.DIRT));
 	}
 
 	public static boolean isMangroveRootOrLog(Block block) {
