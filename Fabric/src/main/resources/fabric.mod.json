@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "treeharvester",
-  "version": "8.5",
+  "version": "8.6",
 
   "name": "Tree Harvester",
   "description": "Harvest (nether) trees and giant mushrooms instantly with fast leaf decay and sapling replacement.",
