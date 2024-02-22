@@ -7,6 +7,7 @@ import com.natamus.treeharvester.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.MyceliumBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import oshi.util.tuples.Triplet;
@@ -37,6 +38,10 @@ public class TreeProcessing {
 			for (BlockPos npos : BlockPos.betweenClosed(pos.getX()-2, pos.getY()+(y-1), pos.getZ()-2, pos.getX()+2, pos.getY()+(y-1), pos.getZ()+2)) {
 				Block nblock = level.getBlockState(npos).getBlock();
 				if (CompareBlockFunctions.isTreeLeaf(nblock, ConfigHandler.enableNetherTrees) || Util.isGiantMushroomLeafBlock(nblock)) {
+					if (level.getBlockState(npos).getOptionalValue(LeavesBlock.PERSISTENT).orElse(false) && ConfigHandler.checkIfPlayerMadeTrees) {
+						return -1;
+					}
+
 					leafcount-=1;
 					if (npos.getY() > highesty) {
 						highesty = npos.getY();
