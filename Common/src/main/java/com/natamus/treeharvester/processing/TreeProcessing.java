@@ -36,13 +36,15 @@ public class TreeProcessing {
 			prevlogCount = logCount;
 
 			for (BlockPos npos : BlockPos.betweenClosed(pos.getX()-2, pos.getY()+(y-1), pos.getZ()-2, pos.getX()+2, pos.getY()+(y-1), pos.getZ()+2)) {
-				Block nblock = level.getBlockState(npos).getBlock();
+				BlockState nblockState = level.getBlockState(npos);
+				Block nblock = nblockState.getBlock();
 				if (CompareBlockFunctions.isTreeLeaf(nblock, ConfigHandler.enableNetherTrees) || Util.isGiantMushroomLeafBlock(nblock)) {
-					if (level.getBlockState(npos).getOptionalValue(LeavesBlock.PERSISTENT).orElse(false) && ConfigHandler.checkIfPlayerMadeTrees) {
+					if (ConfigHandler.ignorePlayerMadeTrees && nblockState.getOptionalValue(LeavesBlock.PERSISTENT).orElse(false)) {
 						return -1;
 					}
 
 					leafcount-=1;
+
 					if (npos.getY() > highesty) {
 						highesty = npos.getY();
 					}

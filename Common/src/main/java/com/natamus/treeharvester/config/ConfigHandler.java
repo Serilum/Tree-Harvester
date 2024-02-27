@@ -16,6 +16,7 @@ public class ConfigHandler extends DuskConfig {
 	@Entry public static boolean enableFastLeafDecay = true;
 	@Entry public static boolean enableNetherTrees = true;
 	@Entry public static boolean enableHugeMushrooms = true;
+	@Entry public static boolean ignorePlayerMadeTrees = true;
 	@Entry public static boolean replaceSaplingOnTreeHarvest = true;
 	@Entry public static boolean replaceMushroomOnMushroomHarvest = true;
 	@Entry public static boolean loseDurabilityPerHarvestedLog = true;
@@ -25,7 +26,6 @@ public class ConfigHandler extends DuskConfig {
 	@Entry public static boolean increaseHarvestingTimePerLog = true;
 	@Entry(min = 0.01, max = 10.0) public static double increasedHarvestingTimePerLogModifier = 0.2;
 	@Entry(min = 1, max = 16) public static int amountOfLeavesBrokenPerTick = 5;
-	@Entry public static boolean checkIfPlayerMadeTrees = true;
 
 	public static void initConfig() {
 		configMetaData.put("mustHoldAxeForTreeHarvest", Arrays.asList(
@@ -45,6 +45,9 @@ public class ConfigHandler extends DuskConfig {
 		));
 		configMetaData.put("enableHugeMushrooms", Arrays.asList(
 			"If enabled, giant/huge mushrooms will also be chopped down quickly."
+		));
+		configMetaData.put("ignorePlayerMadeTrees", Arrays.asList(
+			"If enabled, trees with leaves placed by players won't be destroyed."
 		));
 		configMetaData.put("replaceSaplingOnTreeHarvest", Arrays.asList(
 			"If enabled, automatically replaces the sapling from the drops when a tree is harvested."
@@ -72,9 +75,6 @@ public class ConfigHandler extends DuskConfig {
 		));
 		configMetaData.put("amountOfLeavesBrokenPerTick", Arrays.asList(
 			"How many leaves should be broken per tick after a tree has been harvested. Increasing this will speed up the fast leaf decay, but costs more processing power per tick."
-		));
-		configMetaData.put("checkIfPlayerMadeTrees", Arrays.asList(
-			"If enabled, player made trees won't be destroyed."
 		));
 
 		DuskConfig.init(Reference.NAME, Reference.MOD_ID, ConfigHandler.class);
