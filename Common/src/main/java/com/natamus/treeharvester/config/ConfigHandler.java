@@ -16,6 +16,7 @@ public class ConfigHandler extends DuskConfig {
 	@Entry public static boolean enableFastLeafDecay = true;
 	@Entry public static boolean enableNetherTrees = true;
 	@Entry public static boolean enableHugeMushrooms = true;
+	@Entry public static boolean ignorePlayerMadeTrees = true;
 	@Entry public static boolean replaceSaplingOnTreeHarvest = true;
 	@Entry public static boolean replaceMushroomOnMushroomHarvest = true;
 	@Entry public static boolean loseDurabilityPerHarvestedLog = true;
@@ -44,6 +45,9 @@ public class ConfigHandler extends DuskConfig {
 		));
 		configMetaData.put("enableHugeMushrooms", Arrays.asList(
 			"If enabled, giant/huge mushrooms will also be chopped down quickly."
+		));
+		configMetaData.put("ignorePlayerMadeTrees", Arrays.asList(
+			"If enabled, trees with leaves placed by players won't be destroyed."
 		));
 		configMetaData.put("replaceSaplingOnTreeHarvest", Arrays.asList(
 			"If enabled, automatically replaces the sapling from the drops when a tree is harvested."
