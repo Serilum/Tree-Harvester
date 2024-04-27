@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "id": "treeharvester",
+  "version": "8.8",
+
+  "name": "Tree Harvester",
+  "description": "Harvest (nether) trees and giant mushrooms instantly with fast leaf decay and sapling replacement.",
+  "authors": [ "Rick South" ],
+  "contact": {
+    "homepage": "https://serilum.com/mod/tree-harvester",
+    "sources": "https://github.com/Serilum/Tree-Harvester",
+    "issues": "https://github.com/Serilum/.issue-tracker/labels/Mod:%20Tree%20Harvester"
+  },
+
+  "license": "All Right Reserved",
+  "icon": "icon.png",
+
+  "environment": "*",
+  "entrypoints": { "main": [ "com.natamus.treeharvester.ModFabric" ], "client": [ "com.natamus.treeharvester.ModFabricClient" ], "modmenu": [ "com.natamus.treeharvester.fabric.config.IntegrateModMenu" ] },
+
+  "depends": {
+    "fabricloader": ">=0.12.5",
+    "fabric": "*",
+    "minecraft": ">=1.20",
+    "java": ">=17",
+    "collective": ">=7.52"
+  },
+
+  "custom": {
+    "modmenu": {
+      "links": {
+        "Donate <3" : "https://ricksouth.com/donate"
+      }
+    }
+  },
+
+  "contributors": [
+	  " ",
+	  "Thank you very much to my Membership sponsors for supporting the development of this mod!",
+	  " ",
+	  "If you would like to contribute too, check out https://serilum.com/donate.",
+	  " ",
+	  "Membership sponsors:",
+	  " Alister",
+	  " Andrean Olgo",
+	  " aternosorg",
+	  " BirdieMiner",
+	  " Cherriesaurus",
+	  " Jack",
+	  " Jeremy Langford",
+	  " Michael W. S.",
+	  " pepe1191",
+	  " Shana Gitnick",
+	  " Tyler Behl"
+  ]
+}
