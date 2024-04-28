@@ -4,17 +4,17 @@ import com.natamus.collective.functions.WorldFunctions;
 import com.natamus.treeharvester.events.LeafEvents;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.event.TickEvent;
-import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
 
 @EventBusSubscriber
 public class NeoForgeLeafEvents {
 	@SubscribeEvent
-	public static void onWorldTick(TickEvent.LevelTickEvent e) {
-		Level level = e.level;
-		if (level.isClientSide || !e.phase.equals(TickEvent.Phase.START)) {
+	public static void onWorldTick(LevelTickEvent.Pre e) {
+		Level level = e.getLevel();
+		if (level.isClientSide) {
 			return;
 		}
 
