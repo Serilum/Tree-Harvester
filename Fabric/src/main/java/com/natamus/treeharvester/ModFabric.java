@@ -1,6 +1,7 @@
 package com.natamus.treeharvester;
 
 import com.natamus.collective.check.RegisterMod;
+import com.natamus.collective.check.ShouldLoadCheck;
 import com.natamus.collective.fabric.callbacks.CollectiveBlockEvents;
 import com.natamus.collective.fabric.callbacks.CollectivePlayerEvents;
 import com.natamus.treeharvester.events.LeafEvents;
@@ -28,6 +29,10 @@ public class ModFabric implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
+		if (!ShouldLoadCheck.shouldLoad(Reference.MOD_ID)) {
+			return;
+		}
+
 		setGlobalConstants();
 		ModCommon.init();
 
