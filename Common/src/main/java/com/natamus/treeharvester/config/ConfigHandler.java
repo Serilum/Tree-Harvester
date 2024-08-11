@@ -26,6 +26,7 @@ public class ConfigHandler extends DuskConfig {
 	@Entry public static boolean increaseHarvestingTimePerLog = true;
 	@Entry(min = 0.01, max = 10.0) public static double increasedHarvestingTimePerLogModifier = 0.2;
 	@Entry(min = 1, max = 16) public static int amountOfLeavesBrokenPerTick = 5;
+	public static boolean automaticallyPickupItems = true;
 
 	public static void initConfig() {
 		configMetaData.put("mustHoldAxeForTreeHarvest", Arrays.asList(
@@ -75,6 +76,9 @@ public class ConfigHandler extends DuskConfig {
 		));
 		configMetaData.put("amountOfLeavesBrokenPerTick", Arrays.asList(
 			"How many leaves should be broken per tick after a tree has been harvested. Increasing this will speed up the fast leaf decay, but costs more processing power per tick."
+		));
+		configMetaData.put("automaticallyPickupItems", Arrays.asList(
+			"If enabled, automatically picks up items that are dropped when a tree is harvested including the leaf drops."
 		));
 
 		DuskConfig.init(Reference.NAME, Reference.MOD_ID, ConfigHandler.class);

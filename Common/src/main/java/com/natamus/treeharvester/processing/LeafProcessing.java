@@ -1,9 +1,11 @@
 package com.natamus.treeharvester.processing;
 
+import com.mojang.datafixers.util.Pair;
 import com.natamus.collective.functions.BlockPosFunctions;
 import com.natamus.treeharvester.data.Variables;
 import com.natamus.treeharvester.util.Util;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 
@@ -13,7 +15,7 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class LeafProcessing {
-    public static void breakTreeLeaves(Level level, List<BlockPos> logsToBreak, BlockPos lowestCenterLogPos, BlockPos highestLogPos) {
+    public static void breakTreeLeaves(Level level, Player player, List<BlockPos> logsToBreak, BlockPos lowestCenterLogPos, BlockPos highestLogPos) {
         if (level.isClientSide) {
             return;
         }
@@ -40,7 +42,7 @@ public class LeafProcessing {
         }
 
         if (!Variables.processBreakLeaves.containsKey(level)) {
-            Variables.processBreakLeaves.put(level, new CopyOnWriteArrayList<BlockPos>());
+            Variables.processBreakLeaves.put(level, new CopyOnWriteArrayList<>());
         }
 
         BlockPos highestLeafPos = highestLogPos.above().immutable();
@@ -89,8 +91,8 @@ public class LeafProcessing {
                 }
             }
 
-            if (!Variables.processBreakLeaves.get(level).contains(treeBlockPos)) {
-                Variables.processBreakLeaves.get(level).add(treeBlockPos);
+            if (!Variables.processBreakLeaves.get(level).contains(new Pair<>(treeBlockPos, player))) {
+                Variables.processBreakLeaves.get(level).add(new Pair<>(treeBlockPos, player));
             }
         }
     }

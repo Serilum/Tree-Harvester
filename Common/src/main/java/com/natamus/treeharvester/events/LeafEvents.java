@@ -1,20 +1,26 @@
 package com.natamus.treeharvester.events;
 
+import com.mojang.datafixers.util.Pair;
 import com.natamus.collective.functions.BlockFunctions;
 import com.natamus.collective.functions.CompareBlockFunctions;
 import com.natamus.collective.functions.HashMapFunctions;
 import com.natamus.treeharvester.config.ConfigHandler;
 import com.natamus.treeharvester.data.Variables;
+import com.natamus.treeharvester.processing.SaplingProcessing;
 import com.natamus.treeharvester.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.EnumSet;
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class LeafEvents {
@@ -29,11 +35,28 @@ public class LeafEvents {
 			leavesLeft *=3;
 		}
 
-		for (BlockPos leafPos : Variables.processBreakLeaves.get(level)) {
-			Variables.processBreakLeaves.get(level).remove(leafPos);
+		for (Pair<BlockPos, Player> leafPair : Variables.processBreakLeaves.get(level)) {
+			BlockPos leafPos = leafPair.getFirst();
+			BlockState leafState = level.getBlockState(leafPos);
+			BlockEntity blockEntity = level.getBlockEntity(leafPos);
+			Variables.processBreakLeaves.get(level).remove(leafPair);
 
 			if (Util.isTreeLeaf(level.getBlockState(leafPos).getBlock())) {
-				BlockFunctions.dropBlock(level, leafPos);
+				if(ConfigHandler.automaticallyPickupItems && leafPair.getSecond() != null) {
+					List<ItemStack> drops = Block.getDrops(leafState, (ServerLevel)level, leafPos, blockEntity);
+					for (ItemStack drop : drops) {
+						if(Util.isSapling(Block.byItem(drop.getItem()))) {
+							SaplingProcessing.onSaplingItem(level, leafPair.getSecond(), drop, leafPos);
+						}
+						if(!leafPair.getSecond().addItem(drop)) {
+							Block.popResource(level, leafPos, drop);
+						}
+					}
+					level.setBlock(leafPos, Blocks.AIR.defaultBlockState(), 3);
+				}
+				else {
+					BlockFunctions.dropBlock(level, leafPos);
+				}
 
 				leavesLeft--;
 				if (leavesLeft < 0) {

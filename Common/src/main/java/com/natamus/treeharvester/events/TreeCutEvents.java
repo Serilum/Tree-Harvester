@@ -10,6 +10,7 @@ import com.natamus.treeharvester.processing.LeafProcessing;
 import com.natamus.treeharvester.processing.TreeProcessing;
 import com.natamus.treeharvester.util.Util;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -17,6 +18,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
@@ -103,7 +105,17 @@ public class TreeCutEvents {
 			BlockState logstate = level.getBlockState(logpos);
 			Block log = logstate.getBlock();
 
-			BlockFunctions.dropBlock(level, logpos);
+			if(ConfigHandler.automaticallyPickupItems) {
+				List<ItemStack> drops = Block.getDrops(logstate, (ServerLevel)level, logpos, blockEntity);
+				for (ItemStack drop : drops) {
+					if(!serverPlayer.addItem(drop)) {
+						Block.popResource(level, logpos, drop);
+					}
+				}
+				level.setBlock(logpos, Blocks.AIR.defaultBlockState(), 3);
+			} else {
+				BlockFunctions.dropBlock(level, logpos);
+			}
 			//ForgeEventFactory.onEntityDestroyBlock(player, logpos, logstate);
 
 			if (!player.isCreative()) {
@@ -127,7 +139,7 @@ public class TreeCutEvents {
 			}
 		}
 
-		LeafProcessing.breakTreeLeaves(level, logsToBreak, bpos, highestLogPos);
+		LeafProcessing.breakTreeLeaves(level, player, logsToBreak, bpos, highestLogPos);
 
 		return logsToBreak.size() == 0;
 	}
