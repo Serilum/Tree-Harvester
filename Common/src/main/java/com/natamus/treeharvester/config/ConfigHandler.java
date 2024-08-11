@@ -26,7 +26,7 @@ public class ConfigHandler extends DuskConfig {
 	@Entry public static boolean increaseHarvestingTimePerLog = true;
 	@Entry(min = 0.01, max = 10.0) public static double increasedHarvestingTimePerLogModifier = 0.2;
 	@Entry(min = 1, max = 16) public static int amountOfLeavesBrokenPerTick = 5;
-	public static boolean automaticallyPickupItems = true;
+	public static boolean automaticallyPickupItems = false;
 
 	public static void initConfig() {
 		configMetaData.put("mustHoldAxeForTreeHarvest", Arrays.asList(
