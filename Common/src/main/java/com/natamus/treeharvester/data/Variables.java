@@ -21,7 +21,7 @@ public class Variables {
 	public static HashMap<BlockPos, Integer> highestleaf = new HashMap<BlockPos, Integer>();
 	public static CopyOnWriteArrayList<Triplet<Date, BlockPos, CopyOnWriteArrayList<BlockPos>>> saplingPositions = new CopyOnWriteArrayList<Triplet<Date, BlockPos, CopyOnWriteArrayList<BlockPos>>>();
 
-	public static final HashMap<Level, CopyOnWriteArrayList<BlockPos>> processTickLeaves = new HashMap<Level, CopyOnWriteArrayList<BlockPos>>();
-	public static final HashMap<Level, CopyOnWriteArrayList<BlockPos>> processBreakLeaves = new HashMap<Level, CopyOnWriteArrayList<BlockPos>>();
-	public static final HashMap<Pair<Level, Player>, Pair<Date, Integer>> harvestSpeedCache = new HashMap<Pair<Level, Player>, Pair<Date, Integer>>();
+	public static final HashMap<Level, CopyOnWriteArrayList<BlockPos>> processTickLeaves = new HashMap<>();
+	public static final HashMap<Level, CopyOnWriteArrayList<Pair<BlockPos, Player>>> processBreakLeaves = new HashMap<>();
+	public static final HashMap<Pair<Level, Player>, Pair<Date, Integer>> harvestSpeedCache = new HashMap<>();
 }
