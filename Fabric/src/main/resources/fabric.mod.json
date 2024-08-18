@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "treeharvester",
-  "version": "9.0",
+  "version": "9.1",
 
   "name": "Tree Harvester",
   "description": "Harvest (nether) trees and giant mushrooms instantly with fast leaf decay and sapling replacement.",
@@ -23,7 +23,7 @@
     "fabric": "*",
     "minecraft": ">=1.20",
     "java": ">=17",
-    "collective": ">=7.78"
+    "collective": ">=7.84"
   },
 
   "custom": {

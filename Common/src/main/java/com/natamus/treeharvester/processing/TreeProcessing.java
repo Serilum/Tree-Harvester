@@ -8,7 +8,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LeavesBlock;
-import net.minecraft.world.level.block.MyceliumBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import oshi.util.tuples.Triplet;
 
@@ -67,7 +66,7 @@ public class TreeProcessing {
 		CopyOnWriteArrayList<BlockPos> bottomlogs = new CopyOnWriteArrayList<BlockPos>();
 		if (ConfigHandler.replaceSaplingOnTreeHarvest) {
 			Block blockbelow = level.getBlockState(pos.below()).getBlock();
-			if (CompareBlockFunctions.isDirtBlock(blockbelow) || blockbelow instanceof MyceliumBlock) {
+			if (Util.isPlantableBlock(blockbelow)) {
 				Iterator<BlockPos> it = BlockPos.betweenClosedStream(pos.getX()-1, pos.getY(), pos.getZ()-1, pos.getX()+1, pos.getY(), pos.getZ()+1).iterator();
 				while (it.hasNext()) {
 					BlockPos npos = it.next();
@@ -85,13 +84,17 @@ public class TreeProcessing {
 	}
 
 	private static List<BlockPos> getLogsToBreak(Level level, BlockPos pos, List<BlockPos> logsToBreak, int logCount, Block logType) {
+		if (logsToBreak.size() > 256) {
+			return logsToBreak;
+		}
+
 		List<BlockPos> checkAround = new ArrayList<BlockPos>();
 
 		boolean isMangrove = Util.isMangroveRootOrLog(logType);
 		int downY = pos.getY()-1;
 
 		List<BlockPos> aroundLogs = new ArrayList<BlockPos>();
-		for (BlockPos aL : BlockPos.betweenClosed(pos.getX() - 1, pos.getY() - 1, pos.getZ() - 1, pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1)) {
+		for (BlockPos aL : BlockPos.betweenClosed(pos.getX() - 1, pos.getY(), pos.getZ() - 1, pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1)) {
 			aroundLogs.add(aL.immutable());
 		}
 
