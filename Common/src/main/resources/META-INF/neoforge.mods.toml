@@ -6,7 +6,7 @@ logoFile="icon.png"
 
 [[mods]]
 modId="treeharvester"
-version="9.0"
+version="9.1"
 displayName="Tree Harvester"
 displayURL="https://serilum.com/mod/tree-harvester"
 authors="Rick South"
@@ -22,7 +22,7 @@ If you would like to contribute too, check out https://serilum.com/donate. Appre
 [[dependencies.treeharvester]]
     modId="collective"
     type="required"
-    versionRange="[7.80,)"
+    versionRange="[7.84,)"
     ordering="NONE"
     side="BOTH"
 

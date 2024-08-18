@@ -5,6 +5,7 @@ import com.natamus.collective.functions.BlockPosFunctions;
 import com.natamus.collective.functions.CompareBlockFunctions;
 import com.natamus.treeharvester.config.ConfigHandler;
 import net.minecraft.core.BlockPos;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.material.MapColor;
@@ -25,7 +26,7 @@ public class Util {
 		return CompareBlockFunctions.isTreeLeaf(block, ConfigHandler.enableNetherTrees) || isGiantMushroomLeafBlock(block);
 	}
 	public static boolean isSapling(Block block) {
-		return CompareBlockFunctions.isSapling(block) || (block instanceof MushroomBlock && ConfigHandler.enableHugeMushrooms);
+		return CompareBlockFunctions.isSapling(block) || (block instanceof MushroomBlock && ConfigHandler.enableHugeMushrooms) || block instanceof AzaleaBlock;
 	}
 
 	public static boolean isNetherTreeLeaf(Block block) {
@@ -39,16 +40,22 @@ public class Util {
 		if (!ConfigHandler.enableHugeMushrooms) {
 			return false;
 		}
-		MapColor materialcolour = block.defaultMapColor();
-		return block instanceof HugeMushroomBlock && materialcolour.equals(MapColor.WOOL);
+		try {
+			MapColor materialcolour = block.defaultMapColor();
+			return block instanceof HugeMushroomBlock && materialcolour.equals(MapColor.WOOL);
+		} catch (IllegalArgumentException ignored) {}
+		return false;
 	}
 
 	public static boolean isGiantMushroomLeafBlock(Block block) {
 		if (!ConfigHandler.enableHugeMushrooms) {
 			return false;
 		}
-		MapColor materialcolour = block.defaultMapColor();
-		return block instanceof HugeMushroomBlock && (materialcolour.equals(MapColor.COLOR_RED) || materialcolour.equals(MapColor.DIRT));
+		try {
+			MapColor materialcolour = block.defaultMapColor();
+			return block instanceof HugeMushroomBlock && (materialcolour.equals(MapColor.COLOR_RED) || materialcolour.equals(MapColor.DIRT));
+		} catch (IllegalArgumentException ignored) {}
+		return false;
 	}
 
 	public static boolean isMangroveRootOrLog(Block block) {
@@ -57,6 +64,10 @@ public class Util {
 
 	public static boolean isAzaleaLeaf(Block block) {
 		return block.equals(Blocks.AZALEA_LEAVES) || block.equals(Blocks.FLOWERING_AZALEA_LEAVES);
+	}
+
+	public static boolean isPlantableBlock(Block block) {
+		return block.defaultBlockState().is(BlockTags.DIRT) || CompareBlockFunctions.isDirtBlock(block) || block instanceof MyceliumBlock || block instanceof RootedDirtBlock;
 	}
 
 	public static boolean areEqualLogTypes(Block one, Block two) {
