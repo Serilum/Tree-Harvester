@@ -13,11 +13,14 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
+import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -47,7 +50,7 @@ public class ModFabric implements ModInitializer {
 		});
 
 		ServerTickEvents.START_WORLD_TICK.register((ServerLevel level) -> {
-			LeafEvents.onWorldTick(level);
+			WorldEvents.onWorldTick(level);
 		});
 
 		CollectiveBlockEvents.NEIGHBOUR_NOTIFY.register((Level level, BlockPos pos, BlockState state, EnumSet<Direction> notifiedSides, boolean forceRedstoneUpdate) -> {
@@ -61,6 +64,11 @@ public class ModFabric implements ModInitializer {
 
 		PlayerBlockBreakEvents.BEFORE.register((level, player, pos, state, entity) -> {
 			return TreeCutEvents.onTreeHarvest(level, player, pos, state, entity);
+		});
+
+		AttackBlockCallback.EVENT.register((Player player, Level level, InteractionHand hand, BlockPos pos, Direction direction) -> {
+			TreeCutEvents.startBlockHarvest(player, level, hand, pos, direction);
+			return InteractionResult.PASS;
 		});
 
 		CollectivePlayerEvents.ON_PLAYER_DIG_SPEED_CALC.register((Level level, Player player, float digSpeed, BlockState state) -> {
