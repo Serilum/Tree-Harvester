@@ -18,7 +18,7 @@ import java.util.EnumSet;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class LeafEvents {
-	public static void onWorldTickLeaves(ServerLevel level) {
+	public static void onWorldTick(ServerLevel level) {
 		int sizeLeft = HashMapFunctions.computeIfAbsent(Variables.processBreakLeaves, level, k -> new CopyOnWriteArrayList<>()).size() + HashMapFunctions.computeIfAbsent(Variables.processTickLeaves, level, k -> new CopyOnWriteArrayList<>()).size();
 
 		int leavesLeft = ConfigHandler.amountOfLeavesBrokenPerTick;
