@@ -10,9 +10,6 @@ import com.natamus.treeharvester.processing.LeafProcessing;
 import com.natamus.treeharvester.processing.TreeProcessing;
 import com.natamus.treeharvester.util.Util;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -27,7 +24,6 @@ import net.minecraft.world.phys.HitResult;
 
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 public class TreeCutEvents {
 	public static boolean onTreeHarvest(Level level, Player player, BlockPos bpos, BlockState state, BlockEntity blockEntity) {
@@ -35,38 +31,27 @@ public class TreeCutEvents {
 			return true;
 		}
 
+		Pair<Level, Player> cachepair = new Pair<Level, Player>(level, player);
+		if (!Variables.harvestSpeedCache.containsKey(cachepair)) {
+			if (ConfigHandler.treeHarvestWithoutSneak) {
+				if (player.isCrouching()) {
+					return true;
+				}
+			} else {
+				if (!player.isCrouching()) {
+					return true;
+				}
+			}
+		}
+		else {
+			Variables.harvestSpeedCache.remove(cachepair);
+		}
+
 		Block block = level.getBlockState(bpos).getBlock();
 		if (!Util.isTreeLog(block)) {
 			return true;
 		}
-
-		if (ConfigHandler.increaseHarvestingTimePerLog) {
-			UUID playerUUID = player.getUUID();
-
-			Pair<ResourceKey<Level>, UUID> cachepair = new Pair<ResourceKey<Level>, UUID>(level.dimension(), playerUUID);
-			if (!Variables.harvestSpeedCache.containsKey(cachepair)) {
-				if (ConfigHandler.treeHarvestWithoutSneak) {
-					if (player.isCrouching()) {
-						return true;
-					}
-				} else {
-					if (!player.isCrouching()) {
-						return true;
-					}
-				}
-			} else {
-				Variables.harvestSpeedCache.remove(cachepair);
-			}
-
-			if (!Variables.harvestAllowed.containsKey(player)) {
-				return true;
-			}
-
-			if (!Variables.harvestAllowed.get(player)) {
-				return true;
-			}
-		}
-
+		
 		ItemStack hand = player.getItemInHand(InteractionHand.MAIN_HAND);
 		Item handitem = hand.getItem();
 		if (ConfigHandler.mustHoldAxeForTreeHarvest) {
@@ -157,7 +142,6 @@ public class TreeCutEvents {
 			return digSpeed;
 		}
 
-		UUID playerUUID = player.getUUID();
 		if (ConfigHandler.treeHarvestWithoutSneak) {
 			if (player.isCrouching()) {
 				return digSpeed;
@@ -184,7 +168,7 @@ public class TreeCutEvents {
 		int logcount = -1;
 
 		Date now = new Date();
-		Pair<ResourceKey<Level>, UUID> keypair = new Pair<ResourceKey<Level>, UUID>(level.dimension(), playerUUID);
+		Pair<Level, Player> keypair = new Pair<Level, Player>(level, player);
 		if (Variables.harvestSpeedCache.containsKey(keypair)) {
 			Pair<Date, Integer> valuepair = Variables.harvestSpeedCache.get(keypair);
 			long ms = (now.getTime()-valuepair.getFirst().getTime());
@@ -208,76 +192,21 @@ public class TreeCutEvents {
 			return digSpeed;
 		}
 
+		boolean recheck = false;
 		if (logcount < 0) {
+			if (TreeProcessing.isTreeAndReturnLogAmount(level, bpos) < 0) {
+				return digSpeed;
+			}
+
 			logcount = TreeProcessing.isTreeAndReturnLogAmount(level, bpos);
-			if (logcount <= 0) {
+			if (logcount == 0) {
 				return digSpeed;
 			}
 
 			Variables.harvestSpeedCache.put(keypair, new Pair<Date, Integer>(now, logcount));
+			recheck = true;
 		}
 
 		return digSpeed/(1+(logcount * (float)ConfigHandler.increasedHarvestingTimePerLogModifier));
-	}
-
-	public static void startBlockHarvest(Player player, Level level, InteractionHand hand, BlockPos blockPos, Direction direction) {
-		if (level.isClientSide) {
-			return;
-		}
-
-		if (!ConfigHandler.increaseHarvestingTimePerLog) {
-			return;
-		}
-
-		Block block = level.getBlockState(blockPos).getBlock();
-		if (!Util.isTreeLog(block)) {
-			return;
-		}
-
-		ItemStack handStack = player.getItemInHand(hand);
-		Item handitem = handStack.getItem();
-		if (ConfigHandler.mustHoldAxeForTreeHarvest) {
-			if (!Services.TOOLFUNCTIONS.isAxe(handStack)) {
-				return;
-			}
-
-			if (!Variables.allowedAxes.contains(handitem)) {
-				return;
-			}
-		}
-
-		if (!Variables.harvestAllowed.containsKey(player)) {
-			boolean shouldAllowHarvest = ConfigHandler.treeHarvestWithoutSneak != player.isCrouching();
-			Variables.harvestAllowed.put(player, shouldAllowHarvest);
-		}
-	}
-
-	public static void onWorldTickHarvest(ServerLevel level) {
-		for (Player player : Variables.harvestAllowed.keySet()) {
-			if (player == null) {
-				Variables.harvestAllowed.remove(player);
-				continue;
-			}
-
-			HitResult hitResult = player.pick(20.0D, 0.0F, false);
-			if (hitResult.getType() == HitResult.Type.BLOCK) {
-				BlockPos hitPos = ((BlockHitResult)hitResult).getBlockPos();
-				if (!Util.isTreeLog(player.level().getBlockState(hitPos).getBlock())) {
-					Variables.harvestAllowed.remove(player);
-					return;
-				}
-			}
-
-			if (ConfigHandler.treeHarvestWithoutSneak) {
-				if (player.isCrouching()) {
-					Variables.harvestAllowed.put(player, false);
-				}
-			}
-			else {
-				if (!player.isCrouching()) {
-					Variables.harvestAllowed.put(player, false);
-				}
-			}
-		}
 	}
 }

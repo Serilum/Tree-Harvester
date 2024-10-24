@@ -5,7 +5,6 @@ import com.natamus.treeharvester.events.TreeCutEvents;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -33,10 +32,5 @@ public class ForgeTreeCutEvents {
 		if (originalSpeed != newSpeed) {
 			e.setNewSpeed(newSpeed);
 		}
-	}
-
-	@SubscribeEvent
-	public void onLeftClickBlock(PlayerInteractEvent.LeftClickBlock e) {
-		TreeCutEvents.startBlockHarvest(e.getEntity(), e.getLevel(), e.getHand(), e.getPos(), e.getFace());
 	}
 }
