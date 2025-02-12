@@ -7,12 +7,10 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
-@EventBusSubscriber
 public class ForgeTreeCutEvents {
 	@SubscribeEvent
-	public void onTreeHarvest(BlockEvent.BreakEvent e) {
+	public static void onTreeHarvest(BlockEvent.BreakEvent e) {
 		Level level = WorldFunctions.getWorldIfInstanceOfAndNotRemote(e.getLevel());
 		if (level == null) {
 			return;
@@ -22,7 +20,7 @@ public class ForgeTreeCutEvents {
 	}
 
 	@SubscribeEvent
-	public void onHarvestBreakSpeed(PlayerEvent.BreakSpeed e) {
+	public static void onHarvestBreakSpeed(PlayerEvent.BreakSpeed e) {
 		Player player = e.getEntity();
 		Level level = player.level();
 
