@@ -7,12 +7,10 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
-@EventBusSubscriber
 public class ForgeLeafEvents {
 	@SubscribeEvent
-	public void onWorldTick(TickEvent.LevelTickEvent e) {
+	public static void onWorldTick(TickEvent.LevelTickEvent e) {
 		Level level = e.level;
 		if (level.isClientSide || !e.phase.equals(TickEvent.Phase.START)) {
 			return;
@@ -22,7 +20,7 @@ public class ForgeLeafEvents {
 	}
 
 	@SubscribeEvent
-	public void onNeighbourNotice(BlockEvent.NeighborNotifyEvent e) {
+	public static void onNeighbourNotice(BlockEvent.NeighborNotifyEvent e) {
 		Level level = WorldFunctions.getWorldIfInstanceOfAndNotRemote(e.getLevel());
 		if (level == null) {
 			return;

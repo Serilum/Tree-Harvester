@@ -7,9 +7,7 @@ import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
 
-@EventBusSubscriber
 public class NeoForgeTreeCutEvents {
 	@SubscribeEvent
 	public static void onTreeHarvest(BlockEvent.BreakEvent e) {
