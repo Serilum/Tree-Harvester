@@ -13,6 +13,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import oshi.util.tuples.Triplet;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -81,37 +82,33 @@ public class TreeProcessing {
 			Variables.saplingPositions.add(new Triplet<>(new Date(), pos.immutable(), bottomlogs));
 		}
 
-		return getLogsToBreak(level, pos, new ArrayList<BlockPos>(), logCount, logType);
+		return getLogsToBreak(level, pos, new HashSet<BlockPos>(), logCount, logType);
 	}
 
-	private static List<BlockPos> getLogsToBreak(Level level, BlockPos pos, List<BlockPos> logsToBreak, int logCount, Block logType) {
+	private static List<BlockPos> getLogsToBreak(Level level, BlockPos pos, HashSet<BlockPos> logsToBreak, int logCount, Block logType) {
 		List<BlockPos> checkAround = new ArrayList<BlockPos>();
 
 		boolean isMangrove = Util.isMangroveRootOrLog(logType);
-		int downY = pos.getY()-1;
+		int downY = pos.getY() - 1;
 
-		List<BlockPos> aroundLogs = new ArrayList<BlockPos>();
-		for (BlockPos aL : BlockPos.betweenClosed(pos.getX() - 1, pos.getY() - 1, pos.getZ() - 1, pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1)) {
-			aroundLogs.add(aL.immutable());
-		}
-
-		for (BlockPos aroundLogPos : aroundLogs) {
-			if (logsToBreak.contains(aroundLogPos)) {
+		for (BlockPos aroundLogPos : BlockPos.betweenClosed(pos.getX() - 1, pos.getY() - 1, pos.getZ() - 1, pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1)) {
+			BlockPos aroundLogPosImmutable = aroundLogPos.immutable();
+			if (logsToBreak.contains(aroundLogPosImmutable)) {
 				continue;
 			}
 
-			BlockState logstate = level.getBlockState(aroundLogPos);
+			BlockState logstate = level.getBlockState(aroundLogPosImmutable);
 			Block logblock = logstate.getBlock();
 			if (logblock.equals(logType) || Util.areEqualLogTypes(logType, logblock)) {
-				if (!isMangrove || aroundLogPos.getY() != downY) {
-					checkAround.add(aroundLogPos);
+				if (!isMangrove || aroundLogPosImmutable.getY() != downY) {
+					checkAround.add(aroundLogPosImmutable);
 				}
-				logsToBreak.add(aroundLogPos);
+				logsToBreak.add(aroundLogPosImmutable);
 			}
 		}
 
-		if (checkAround.size() == 0) {
-			return logsToBreak;
+		if (checkAround.isEmpty()) {
+			return new ArrayList<BlockPos>(logsToBreak);
 		}
 
 		for (BlockPos capos : checkAround) {
