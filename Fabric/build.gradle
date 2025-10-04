@@ -28,7 +28,7 @@ dependencies {
     implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
     implementation project(":Common")
 
-    modCompileOnly("com.terraformersmc:modmenu:15.0.0-beta.1") { exclude(module: "fabric-api") } // modApi
+    modApi("com.terraformersmc:modmenu:16.0.0-rc.1") { exclude(module: "fabric-api") }
 
     modImplementation "com.natamus.collective-ml:collective-fabric:${minecraft_version}-${collective_version}"
     modCompileOnly "com.natamus.collective-ml:collective:${minecraft_version}-${collective_version}"
