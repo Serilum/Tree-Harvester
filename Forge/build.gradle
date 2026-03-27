@@ -46,7 +46,7 @@ minecraft {
 
             systemProperty 'eventbus.api.strictRuntimeChecks', 'true'
 
-            //args "-mixin.config=${mod_id}.mixins.json"
+            args "-mixin.config=${mod_id}.mixins.json"
         }
 
         register('client') {
