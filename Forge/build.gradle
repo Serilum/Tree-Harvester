@@ -10,7 +10,7 @@ base {
 
 mixin { // mixin
     config 'treeharvester.mixins.json' // mixin
-    
+
     debug.verbose = true // mixin
     debug.export = true // mixin
 } // mixin
@@ -61,7 +61,7 @@ minecraft {
         data {
             workingDirectory project.file('run')
             arg "-mixin.config=treeharvester.mixins.json" // mixin
-            
+
             ideaModule "${rootProject.name}.${project.name}.main"
             args '--mod', mod_id, '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
             taskName 'Data'
@@ -123,7 +123,7 @@ repositories {
 jar {
     manifest {
         attributes([
-            "MixinConfigs" : "treeharvester.mixins.json" // mixin
+                "MixinConfigs" : "treeharvester.mixins.json" // mixin
         ])
     }
 }
