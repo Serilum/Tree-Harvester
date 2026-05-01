@@ -4,13 +4,13 @@ import com.natamus.collective.functions.WorldFunctions;
 import com.natamus.treeharvester.events.TreeCutEvents;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.level.block.BreakBlockEvent;
 
 public class NeoForgeTreeCutEvents {
 	@SubscribeEvent
-	public static void onTreeHarvest(BlockEvent.BreakEvent e) {
+	public static void onTreeHarvest(BreakBlockEvent e) {
 		Level level = WorldFunctions.getWorldIfInstanceOfAndNotRemote(e.getLevel());
 		if (level == null) {
 			return;

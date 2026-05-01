@@ -6,7 +6,7 @@ logoFile="icon.png"
 
 [[mods]]
 modId="treeharvester"
-version="9.3"
+version="9.4"
 displayName="Tree Harvester"
 displayURL="https://serilum.com/mod/tree-harvester"
 authors="Rick South"
@@ -14,7 +14,7 @@ description='''Harvest (nether) trees and giant mushrooms instantly with fast le
 '''
 credits='''Thank you very much to my Membership sponsors for supporting the development of this mod:  
 
-akanealw, Alister, Andrean Olgo, aternosorg, Cherriesaurus, MWS, t128, Tyler Behl, XAgent, ตัวตรึง พระนคร   
+akanealw, Andrean Olgo, aternosorg, Cherriesaurus, MWS, Tyler Behl, XAgent   
 
 If you would like to contribute too, check out https://serilum.com/donate. Appreciate it! <3   
 '''
@@ -22,7 +22,7 @@ If you would like to contribute too, check out https://serilum.com/donate. Appre
 [[dependencies.treeharvester]]
     modId="collective"
     mandatory=true
-    versionRange="[8.17,)"
+    versionRange="[8.22,)"
     ordering="NONE"
     side="BOTH"
 
