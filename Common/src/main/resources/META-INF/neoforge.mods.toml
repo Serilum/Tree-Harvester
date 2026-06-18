@@ -14,7 +14,7 @@ description='''Harvest (nether) trees and giant mushrooms instantly with fast le
 '''
 credits='''Thank you very much to my Membership sponsors for supporting the development of this mod:  
 
-akanealw, Andrean Olgo, aternosorg, Cherriesaurus, MWS, Tyler Behl, XAgent   
+Andrean Olgo, aternosorg, Cherriesaurus, Josh, Linda Jansen, Michelle Smith, MWS, Tyler Behl   
 
 If you would like to contribute too, check out https://serilum.com/donate. Appreciate it! <3   
 '''
@@ -22,14 +22,14 @@ If you would like to contribute too, check out https://serilum.com/donate. Appre
 [[dependencies.treeharvester]]
     modId="collective"
     type="required"
-    versionRange="[8.22,)"
+    versionRange="[8.29,)"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.treeharvester]]
     modId="minecraft"
     type="required"
-    versionRange="[26.1.2]"
+    versionRange="[26.2]"
     ordering="NONE"
     side="BOTH"
 
