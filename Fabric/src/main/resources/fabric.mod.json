@@ -12,7 +12,7 @@
     "issues": "https://github.com/Serilum/.issue-tracker/labels/Mod:%20Tree%20Harvester"
   },
 
-  "license": "All Right Reserved",
+  "license": "All Rights Reserved",
   "icon": "icon.png",
 
   "environment": "*",
@@ -21,9 +21,9 @@
   "depends": {
     "fabricloader": ">=0.18.0",
     "fabric-api": "*",
-    "minecraft": ">=26.2",
+    "minecraft": ">=26.3",
     "java": ">=25",
-    "collective": ">=8.29"
+    "collective": ">=8.39"
   },
 
   "custom": {
@@ -42,11 +42,10 @@
 	  " ",
 	  "Membership sponsors:",
 	  " Andrean Olgo",
+	  " AnyankaT",
 	  " aternosorg",
 	  " Cherriesaurus",
-	  " Josh",
 	  " Linda Jansen",
-	  " Michelle Smith",
 	  " MWS",
 	  " Tyler Behl"
   ]

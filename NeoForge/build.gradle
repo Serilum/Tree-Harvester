@@ -4,7 +4,7 @@ plugins {
 }
 
 repositories {
-    maven { url "https://github.com/Serilum/.maven/raw/maven/" }
+    maven { url "https://maven.serilum.com/" }
 }
 
 neoForge {
