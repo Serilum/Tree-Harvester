@@ -1,14 +1,14 @@
 plugins {
-    id 'fabric-loom' version '1.1-SNAPSHOT'
+    id 'fabric-loom' version '1.5-SNAPSHOT'
     id 'maven-publish'
     id 'idea'
+    id 'com.serilum.tether'
 }
 
 archivesBaseName = "${mod_name}-fabric-${minecraft_version}"
 
 repositories {
     maven { url "https://maven.terraformersmc.com/releases/" }
-    maven { url "https://github.com/Serilum/.maven/raw/maven/" }
 }
 
 dependencies {
@@ -22,9 +22,6 @@ dependencies {
     implementation project(":Common")
 
     modApi("com.terraformersmc:modmenu:7.0.1") { exclude(module: "fabric-api") }
-
-    modImplementation "com.natamus.collective-ml:collective-fabric:${minecraft_version}-${collective_version}"
-    modCompileOnly "com.natamus.collective-ml:collective:${minecraft_version}-${collective_version}"
 }
 
 loom {
@@ -60,12 +57,6 @@ processResources {
 
 tasks.withType(JavaCompile) {
     source(project(":Common").sourceSets.main.allSource)
-}
-
-jar {
-    from("LICENSE") {
-        rename { "${it}_${mod_name}" }
-    }
 }
 
 publishing {

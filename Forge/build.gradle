@@ -9,6 +9,9 @@ buildscript {
         classpath 'org.spongepowered:mixingradle:0.7.+' // mixin
     }
 }
+plugins {
+    id 'com.serilum.tether'
+}
 apply plugin: 'java'
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
@@ -79,10 +82,6 @@ dependencies {
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor' // mixin
 
     compileOnly project(":Common")
-
-    runtimeOnly fg.deobf("com.natamus.collective-ml:collective-forge:${minecraft_version}-${collective_version}")
-    compileOnly fg.deobf("com.natamus.collective-ml:collective-forge:${minecraft_version}-${collective_version}")
-    compileOnly fg.deobf("com.natamus.collective-ml:collective:${minecraft_version}-${collective_version}")
 }
 
 mixin { // mixin
@@ -116,11 +115,5 @@ publishing {
         maven {
             url "file://" + System.getenv("local_maven")
         }
-    }
-}
-
-repositories {
-    maven {
-        url = "https://github.com/Serilum/.maven/raw/maven/"
     }
 }

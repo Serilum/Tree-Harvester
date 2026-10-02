@@ -1,9 +1,11 @@
 pluginManagement {
 
     repositories {
-        
+
+        maven { url = uri('https://maven.serilum.com/') }
+
         maven {
-        
+
             name = 'Fabric'
             url = 'https://maven.fabricmc.net/'
         }
@@ -33,6 +35,9 @@ pluginManagement {
 
         mavenCentral()
         gradlePluginPortal()
+    }
+    plugins {
+        id 'com.serilum.tether' version '1.+'
     }
 }
 
