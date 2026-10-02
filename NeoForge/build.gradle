@@ -4,6 +4,7 @@ plugins {
     id 'idea'
     id 'net.neoforged.gradle.userdev' version '7.0.145'
 //    id 'net.neoforged.gradle.mixin' version '7.+'  // mixin
+    id 'com.serilum.tether'
 }
 
 base {
@@ -50,10 +51,6 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 dependencies {
     implementation "net.neoforged:neoforge:${neo_version}"
     compileOnly project(":Common")
-
-    runtimeOnly "com.natamus.collective-ml:collective-neoforge:${minecraft_version}-${collective_version}"
-    compileOnly "com.natamus.collective-ml:collective-neoforge:${minecraft_version}-${collective_version}"
-    compileOnly "com.natamus.collective-ml:collective:${minecraft_version}-${collective_version}"
 }
 
 tasks.named('compileJava', JavaCompile).configure {
@@ -87,10 +84,4 @@ tasks.withType(ProcessResources).configureEach {
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
-}
-
-repositories {
-    maven {
-        url = "https://github.com/Serilum/.maven/raw/maven/"
-    }
 }

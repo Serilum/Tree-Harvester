@@ -2,6 +2,7 @@ plugins {
     id 'idea'
     id 'net.minecraftforge.gradle' version '6.0.24'
     id 'org.spongepowered.mixin' version "0.7-SNAPSHOT" // mixin
+    id 'com.serilum.tether'
 }
 
 base {
@@ -39,7 +40,7 @@ minecraft {
             mods {
                 modClientRun {
                     source sourceSets.main
-                    source project(":Common").sourceSets.main
+                    // source project(":Common").sourceSets.main
                 }
             }
         }
@@ -82,10 +83,6 @@ dependencies {
     compileOnly project(":Common")
 
     implementation('net.sf.jopt-simple:jopt-simple:5.0.4') { version { strictly '5.0.4' } }
-
-    runtimeOnly "com.natamus.collective-ml:collective-forge:${minecraft_version}-${collective_version}"
-    compileOnly "com.natamus.collective-ml:collective-forge:${minecraft_version}-${collective_version}"
-    compileOnly "com.natamus.collective-ml:collective:${minecraft_version}-${collective_version}"
 }
 
 tasks.withType(Jar).configureEach {
@@ -112,12 +109,6 @@ sourceSets.each {
 
 processResources {
     from project(":Common").sourceSets.main.resources
-}
-
-repositories {
-    maven {
-        url = "https://github.com/Serilum/.maven/raw/maven/"
-    }
 }
 
 jar {
