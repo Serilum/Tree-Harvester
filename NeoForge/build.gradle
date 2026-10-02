@@ -1,10 +1,7 @@
 plugins {
     id 'multiloader-loader'
     id 'net.neoforged.moddev'
-}
-
-repositories {
-    maven { url "https://github.com/Serilum/.maven/raw/maven/" }
+    id 'com.serilum.tether'
 }
 
 neoForge {
@@ -41,12 +38,6 @@ neoForge {
 }
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
-
-dependencies {
-    runtimeOnly "com.natamus.collective-ml:collective-neoforge:${minecraft_display_version}-${collective_version}"
-    compileOnly "com.natamus.collective-ml:collective-neoforge:${minecraft_display_version}-${collective_version}"
-    compileOnly "com.natamus.collective-ml:collective:${minecraft_display_version}-${collective_version}"
-}
 
 // Implement mcgradleconventions loader attribute
 def loaderAttribute = Attribute.of('io.github.mcgradleconventions.loader', String)
