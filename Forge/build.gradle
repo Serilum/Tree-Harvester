@@ -4,6 +4,7 @@ plugins {
     id 'net.minecraftforge.gradle' version '[7.0.29,8.0)'
     id 'net.minecraftforge.jarjar' version '0.2.3'
     // id 'org.spongepowered.mixin' version '0.7-SNAPSHOT'
+    id 'com.serilum.tether'
 }
 
 repositories {
@@ -15,8 +16,6 @@ repositories {
 
     mavenCentral()
     mavenLocal()
-
-    maven { url "https://maven.serilum.com/" }
 }
 
 base {
@@ -78,10 +77,6 @@ dependencies {
 
     // Forge's hack fix
     implementation('net.sf.jopt-simple:jopt-simple:5.0.4') { version { strictly '5.0.4' } }
-
-    runtimeOnly "com.natamus.collective-ml:collective-forge:${minecraft_display_version}-${collective_version}"
-    compileOnly "com.natamus.collective-ml:collective-forge:${minecraft_display_version}-${collective_version}"
-    compileOnly "com.natamus.collective-ml:collective:${minecraft_display_version}-${collective_version}"
 }
 
 sourceSets.each {
