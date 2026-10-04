@@ -17,13 +17,13 @@ public class ForgeTreeCutEvents {
 	}
 
 	@SubscribeEvent
-	public static void onTreeHarvest(BlockEvent.BreakEvent e) {
+	public static boolean onTreeHarvest(BlockEvent.BreakEvent e) {
 		Level level = WorldFunctions.getWorldIfInstanceOfAndNotRemote(e.getLevel());
 		if (level == null) {
-			return;
+			return false;
 		}
-		
-		TreeCutEvents.onTreeHarvest(level, e.getPlayer(), e.getPos(), e.getState(), null);
+
+		return !TreeCutEvents.onTreeHarvest(level, e.getPlayer(), e.getPos(), e.getState(), null);
 	}
 
 	@SubscribeEvent
