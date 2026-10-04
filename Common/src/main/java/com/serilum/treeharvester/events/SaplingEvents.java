@@ -12,7 +12,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import oshi.util.tuples.Triplet;
+import net.minecraft.world.level.block.MushroomBlock;
+import oshi.util.tuples.Quartet;
 
 import java.util.Date;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -43,28 +44,36 @@ public class SaplingEvents {
 			return;
 		}
 
+		if (block instanceof MushroomBlock && !ConfigHandler.replaceMushroomOnMushroomHarvest) {
+			return;
+		}
+
 		BlockPos itemPos = itemEntity.blockPosition();
 		BlockPos yZeroItemPos = itemPos.atY(0);
 
 		Date now = new Date();
-		for (Triplet<Date, BlockPos, CopyOnWriteArrayList<BlockPos>> triplet : Variables.saplingPositions) {
-			long ms = (now.getTime()-triplet.getA().getTime());
+		for (Quartet<Date, BlockPos, CopyOnWriteArrayList<BlockPos>, Block> quartet : Variables.saplingPositions) {
+			long ms = (now.getTime()-quartet.getA().getTime());
 			if (ms > 2000) {
-				Variables.saplingPositions.remove(triplet);
+				Variables.saplingPositions.remove(quartet);
 				continue;
 			}
 
-			if (BlockPosFunctions.withinDistance(yZeroItemPos, triplet.getB().atY(0), 6)) {
-				for (BlockPos lowerLog : triplet.getC()) {
+			if (!Util.isSaplingOfTree(level, block, quartet.getD())) {
+				continue;
+			}
+
+			if (BlockPosFunctions.withinDistance(yZeroItemPos, quartet.getB().atY(0), 6)) {
+				for (BlockPos lowerLog : quartet.getC()) {
 					if (itemStack.getCount() > 0) {
 						level.setBlock(lowerLog, block.defaultBlockState(), 3);
 						itemStack.shrink(1);
-						triplet.getC().remove(lowerLog);
+						quartet.getC().remove(lowerLog);
 					}
 				}
 
-				if (triplet.getC().size() == 0) {
-					Variables.saplingPositions.remove(triplet);
+				if (quartet.getC().size() == 0) {
+					Variables.saplingPositions.remove(quartet);
 				}
 			}
 

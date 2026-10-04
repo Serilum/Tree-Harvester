@@ -16,7 +16,9 @@ public class ForgeTreeCutEvents {
 			return;
 		}
 		
-		TreeCutEvents.onTreeHarvest(level, e.getPlayer(), e.getPos(), e.getState(), null);
+		if (!TreeCutEvents.onTreeHarvest(level, e.getPlayer(), e.getPos(), e.getState(), null)) {
+			e.setCanceled(true);
+		}
 	}
 
 	@SubscribeEvent

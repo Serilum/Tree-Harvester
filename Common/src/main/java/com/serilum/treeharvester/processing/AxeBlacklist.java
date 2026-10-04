@@ -11,74 +11,93 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
-import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
 public class AxeBlacklist {
-	public static void attemptProcessingAxeBlacklist(Level level) {
-		if (!Variables.processedAxeBlacklist) {
-			try {
-				setupAxeBlacklist(level);
-				Variables.processedAxeBlacklist = true;
-			} catch (IOException ex) {
-				System.out.println("[" + Reference.NAME + "] Something went wrong setting up the axe blacklist file.");
-			}
+	public static synchronized void attemptProcessingAxeBlacklist(Level level) {
+		if (Variables.processedAxeBlacklist) {
+			return;
+		}
+
+		Variables.processedAxeBlacklist = true;
+		try {
+			setupAxeBlacklist(level);
+		} catch (IOException ex) {
+			System.out.println("[" + Reference.NAME + "] Something went wrong setting up the axe blacklist file.");
 		}
 	}
 
-	public static void setupAxeBlacklist(Level level) throws IOException {
-		Registry<Item> itemRegistry = level.registryAccess().registryOrThrow(Registries.ITEM);
-		List<String> blacklist = new ArrayList<String>();
+	public static boolean isBlacklisted(Level level, Item item) {
+		attemptProcessingAxeBlacklist(level);
 
-		PrintWriter writer = null;
-		if (!Constants.dir.isDirectory() || !Constants.file.isFile()) {
-			boolean ignored = Constants.dir.mkdirs();
-			writer = new PrintWriter(Constants.dirpath + File.separator + "harvestable_axe_blacklist.txt", StandardCharsets.UTF_8);
+		ResourceLocation rl = level.registryAccess().registryOrThrow(Registries.ITEM).getKey(item);
+		if (rl == null) {
+			return false;
 		}
-		else {
-			String blcontent = new String(Files.readAllBytes(Paths.get(Constants.dirpath + File.separator + "harvestable_axe_blacklist.txt")));
+		return Variables.blacklistedAxes.contains(rl.toString());
+	}
+
+	private static void setupAxeBlacklist(Level level) throws IOException {
+		Registry<Item> itemRegistry = level.registryAccess().registryOrThrow(Registries.ITEM);
+
+		List<String> listedAxes = new ArrayList<>();
+		List<String> blacklist = new ArrayList<>();
+
+		boolean fileExists = Constants.dir.isDirectory() && Constants.file.isFile();
+		if (fileExists) {
+			String blcontent = new String(Files.readAllBytes(Constants.file.toPath()));
 			for (String axerl : blcontent.split("," )) {
-				String name = axerl.replace("\n", "").trim();
+				String name = axerl.replace("\n", "").replace("\r", "").trim();
 				if (name.startsWith("//")) {
 					continue;
 				}
 				if (name.startsWith("!")) {
-					blacklist.add(name.replace("!", ""));
+					name = name.replace("!", "").trim();
+					blacklist.add(name);
 				}
+				listedAxes.add(name);
+			}
+		}
+		else {
+			boolean ignored = Constants.dir.mkdirs();
+		}
+
+		Variables.blacklistedAxes = blacklist;
+
+		List<String> unlistedAxes = new ArrayList<>();
+		for (Item item : itemRegistry) {
+			if (!Services.TOOLFUNCTIONS.isAxe(new ItemStack(item))) {
+				continue;
+			}
+
+			ResourceLocation rl = itemRegistry.getKey(item);
+			if (rl == null) {
+				continue;
+			}
+
+			String name = rl.toString();
+			if (!listedAxes.contains(name)) {
+				unlistedAxes.add(name);
 			}
 		}
 
-		if (writer != null) {
+		if (fileExists && unlistedAxes.isEmpty()) {
+			return;
+		}
+
+		PrintWriter writer = new PrintWriter(new FileWriter(Constants.file, StandardCharsets.UTF_8, fileExists));
+		if (!fileExists) {
 			writer.println("// To disable a certain axe from being able to harvest trees, add an exclamation mark (!) in front of the line,");
 		}
-
-		for (Item item : itemRegistry) {
-			if (Services.TOOLFUNCTIONS.isAxe(new ItemStack(item))) {
-				ResourceLocation rl = itemRegistry.getKey(item);
-				if (rl == null) {
-					continue;
-				}
-
-				String name = rl.toString();
-
-				if (writer != null) {
-					writer.println(name + ",");
-				}
-
-				if (!blacklist.contains(name)) {
-					Variables.allowedAxes.add(item);
-				}
-			}
+		for (String name : unlistedAxes) {
+			writer.println(name + ",");
 		}
-
-		if (writer != null) {
-			writer.close();
-		}
+		writer.close();
 	}
 }

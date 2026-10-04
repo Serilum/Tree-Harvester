@@ -35,6 +35,7 @@ public class ModForge {
 
 	private void loadComplete(final FMLLoadCompleteEvent event) {
 		MinecraftForge.EVENT_BUS.register(ForgeLeafEvents.class);
+		MinecraftForge.EVENT_BUS.register(ForgePlayerEvents.class);
 		MinecraftForge.EVENT_BUS.register(ForgeSaplingEvents.class);
 		MinecraftForge.EVENT_BUS.register(ForgeTreeCutEvents.class);
 		MinecraftForge.EVENT_BUS.register(ForgeWorldEvents.class);
