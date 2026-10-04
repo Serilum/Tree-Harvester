@@ -33,6 +33,7 @@ public class ModForge {
 
 	private void loadComplete(final FMLLoadCompleteEvent event) {
 		ForgeLeafEvents.registerEventsInBus();
+		ForgePlayerEvents.registerEventsInBus();
 		ForgeSaplingEvents.registerEventsInBus();
 		ForgeTreeCutEvents.registerEventsInBus();
 		ForgeWorldEvents.registerEventsInBus();

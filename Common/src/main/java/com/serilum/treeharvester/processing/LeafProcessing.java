@@ -4,8 +4,10 @@ import com.natamus.collective.functions.BlockPosFunctions;
 import com.serilum.treeharvester.data.Variables;
 import com.serilum.treeharvester.util.Util;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,7 +15,22 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class LeafProcessing {
-	public static void breakTreeLeaves(Level level, List<BlockPos> logsToBreak, BlockPos lowestCenterLogPos, BlockPos highestLogPos) {
+	public static Block getTreeLeafBlock(Level level, BlockPos highestLogPos) {
+		BlockPos highestLeafPos = highestLogPos.above().immutable();
+		Block highestLeafBlock = level.getBlockState(highestLeafPos).getBlock();
+		if (!Util.isTreeLeaf(highestLeafBlock)) {
+			for (BlockPos aroundPos : BlockPosFunctions.getBlocksAround(highestLeafPos, false)) {
+				Block aroundBlock = level.getBlockState(aroundPos).getBlock();
+				if (Util.isTreeLeaf(aroundBlock)) {
+					highestLeafBlock = aroundBlock;
+					break;
+				}
+			}
+		}
+		return highestLeafBlock;
+	}
+
+	public static void breakTreeLeaves(Level level, List<BlockPos> logsToBreak, BlockPos lowestCenterLogPos, BlockPos highestLogPos, Block highestLeafBlock, ItemStack harvestTool) {
 		if (level.isClientSide()) {
 			return;
 		}
@@ -43,18 +60,6 @@ public class LeafProcessing {
 			Variables.processBreakLeaves.put(level, new CopyOnWriteArrayList<BlockPos>());
 		}
 
-		BlockPos highestLeafPos = highestLogPos.above().immutable();
-		Block highestLeafBlock = level.getBlockState(highestLeafPos).getBlock();
-		if (!Util.isTreeLeaf(highestLeafBlock)) {
-			for (BlockPos aroundPos : BlockPosFunctions.getBlocksAround(highestLeafPos, false)) {
-				Block aroundBlock = level.getBlockState(aroundPos).getBlock();
-				if (Util.isTreeLeaf(aroundBlock)) {
-					highestLeafBlock = aroundBlock;
-					break;
-				}
-			}
-		}
-
 		boolean highestLeafIsMushroom = Util.isGiantMushroomLeafBlock(highestLeafBlock);
 
 		int distance = 3;
@@ -73,9 +78,10 @@ public class LeafProcessing {
 				continue;
 			}
 
-			Block treeBlock = level.getBlockState(treeBlockPos).getBlock();
+			BlockState treeBlockState = level.getBlockState(treeBlockPos);
+			Block treeBlock = treeBlockState.getBlock();
 
-			if (!Util.isTreeLeaf(treeBlock)) {
+			if (!Util.isTreeLeaf(treeBlock) || TreeProcessing.isPersistentLeaf(treeBlockState)) {
 				continue;
 			}
 
@@ -91,6 +97,7 @@ public class LeafProcessing {
 
 			if (!Variables.processBreakLeaves.get(level).contains(treeBlockPos)) {
 				Variables.processBreakLeaves.get(level).add(treeBlockPos);
+				Variables.leafHarvestTools.put(treeBlockPos, harvestTool);
 			}
 		}
 	}

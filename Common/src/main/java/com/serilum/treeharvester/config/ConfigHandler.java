@@ -21,11 +21,13 @@ public class ConfigHandler extends DuskConfig {
 	@Entry public static boolean replaceMushroomOnMushroomHarvest = true;
 	@Entry public static boolean loseDurabilityPerHarvestedLog = true;
 	@Entry(min = 0.001, max = 1.0) public static double loseDurabilityModifier = 1.0;
+	@Entry public static boolean preventAxeBreakingOnTreeHarvest = true;
 	@Entry public static boolean increaseExhaustionPerHarvestedLog = true;
 	@Entry(min = 0.001, max = 1.0) public static double increaseExhaustionModifier = 1.0;
 	@Entry public static boolean increaseHarvestingTimePerLog = true;
 	@Entry(min = 0.01, max = 10.0) public static double increasedHarvestingTimePerLogModifier = 0.2;
 	@Entry(min = 1, max = 16) public static int amountOfLeavesBrokenPerTick = 5;
+	@Entry(min = -1, max = 100000) public static int maxAmountOfLogsBrokenPerHarvest = -1;
 
 	public static void initConfig() {
 		configMetaData.put("mustHoldAxeForTreeHarvest", Arrays.asList(
@@ -38,7 +40,7 @@ public class ConfigHandler extends DuskConfig {
 			"Whether the mod should attempt to find the actual bottom log of the tree and start there. This means you can break a tree in the middle and it will still completely be felled."
 		));
 		configMetaData.put("enableFastLeafDecay", Arrays.asList(
-			"If enabled, the leaves around a broken tree will quickly disappear. Only works with 'instantBreakLeavesAround' disabled."
+			"If enabled, the leaves around a broken tree will quickly disappear."
 		));
 		configMetaData.put("enableNetherTrees", Arrays.asList(
 			"If enabled, the warped stem/crimson trees in the nether will also be chopped down quickly."
@@ -61,6 +63,9 @@ public class ConfigHandler extends DuskConfig {
 		configMetaData.put("loseDurabilityModifier", Arrays.asList(
 			"Here you can set how much durability chopping down a tree should take from the axe. For example if set to 0.1, this means that every 10 logs take 1 durability."
 		));
+		configMetaData.put("preventAxeBreakingOnTreeHarvest", Arrays.asList(
+			"If enabled, harvesting a tree never breaks the axe. The whole tree is still felled, but the axe stops at 1 durability. An axe with 1 durability left can't harvest trees until it's repaired."
+		));
 		configMetaData.put("increaseExhaustionPerHarvestedLog", Arrays.asList(
 			"If enabled, players' exhaustion level increases 0.005 per harvested log (Minecraft's default per broken block) * increaseExhaustionModifier."
 		));
@@ -75,6 +80,9 @@ public class ConfigHandler extends DuskConfig {
 		));
 		configMetaData.put("amountOfLeavesBrokenPerTick", Arrays.asList(
 			"How many leaves should be broken per tick after a tree has been harvested. Increasing this will speed up the fast leaf decay, but costs more processing power per tick."
+		));
+		configMetaData.put("maxAmountOfLogsBrokenPerHarvest", Arrays.asList(
+			"The maximum amount of logs broken in one harvest. The logs closest to the broken log go first, so a bigger tree is only partly felled. Useful against lag from huge modded trees or forests with connected logs. -1 means no limit."
 		));
 
 		DuskConfig.init(Reference.NAME, Reference.MOD_ID, ConfigHandler.class);

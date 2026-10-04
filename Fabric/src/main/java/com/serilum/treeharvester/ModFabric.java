@@ -5,6 +5,7 @@ import com.natamus.collective.check.ShouldLoadCheck;
 import com.natamus.collective.fabric.callbacks.CollectiveBlockEvents;
 import com.natamus.collective.fabric.callbacks.CollectivePlayerEvents;
 import com.serilum.treeharvester.events.LeafEvents;
+import com.serilum.treeharvester.events.PlayerEvents;
 import com.serilum.treeharvester.events.SaplingEvents;
 import com.serilum.treeharvester.events.TreeCutEvents;
 import com.serilum.treeharvester.events.WorldEvents;
@@ -65,6 +66,10 @@ public class ModFabric implements ModInitializer {
 
 		CollectivePlayerEvents.ON_PLAYER_DIG_SPEED_CALC.register((Level level, Player player, float digSpeed, BlockState state) -> {
 			return TreeCutEvents.onHarvestBreakSpeed(level, player, digSpeed, state);
+		});
+
+		CollectivePlayerEvents.PLAYER_LOGGED_IN.register((Level level, Player player) -> {
+			PlayerEvents.onPlayerLogin(level, player);
 		});
 	}
 
