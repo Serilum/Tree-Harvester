@@ -33,6 +33,7 @@ public class ModNeoForge {
 
 	private void loadComplete(final FMLLoadCompleteEvent event) {
 		NeoForge.EVENT_BUS.register(NeoForgeLeafEvents.class);
+		NeoForge.EVENT_BUS.register(NeoForgePlayerEvents.class);
 		NeoForge.EVENT_BUS.register(NeoForgeSaplingEvents.class);
 		NeoForge.EVENT_BUS.register(NeoForgeTreeCutEvents.class);
 		NeoForge.EVENT_BUS.register(NeoForgeWorldEvents.class);

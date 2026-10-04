@@ -18,6 +18,8 @@ public class ModFabricClient implements ClientModInitializer {
 			return;
 		}
 
+		ModCommon.registerPackets();
+
 		registerEvents();
 	}
 	

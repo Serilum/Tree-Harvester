@@ -1,7 +1,6 @@
 package com.serilum.treeharvester.events;
 
 import com.natamus.collective.functions.BlockFunctions;
-import com.natamus.collective.functions.CompareBlockFunctions;
 import com.natamus.collective.functions.HashMapFunctions;
 import com.serilum.treeharvester.config.ConfigHandler;
 import com.serilum.treeharvester.data.Variables;
@@ -9,6 +8,7 @@ import com.serilum.treeharvester.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -31,9 +31,15 @@ public class LeafEvents {
 
 		for (BlockPos leafPos : Variables.processBreakLeaves.get(level)) {
 			Variables.processBreakLeaves.get(level).remove(leafPos);
+			ItemStack harvestTool = Variables.leafHarvestTools.remove(leafPos);
 
 			if (Util.isTreeLeaf(level.getBlockState(leafPos).getBlock())) {
-				BlockFunctions.dropBlock(level, leafPos);
+				if (harvestTool == null) {
+					BlockFunctions.dropBlock(level, leafPos);
+				}
+				else {
+					BlockFunctions.dropBlock(level, leafPos, null, harvestTool);
+				}
 
 				leavesLeft--;
 				if (leavesLeft < 0) {
@@ -68,6 +74,10 @@ public class LeafEvents {
 			return;
 		}
 
+		if (!ConfigHandler.enableFastLeafDecay) {
+			return;
+		}
+
 		if (!state.getBlock().equals(Blocks.AIR)) {
 			return;
 		}
@@ -81,7 +91,7 @@ public class LeafEvents {
 
 			BlockState oState = level.getBlockState(oPos);
 			Block oBlock = oState.getBlock();
-			if (CompareBlockFunctions.isTreeLeaf(oBlock, ConfigHandler.enableNetherTrees) || Util.isGiantMushroomLeafBlock(oBlock)) {
+			if (Util.isTreeLeaf(oBlock)) {
 				BlockPos addPos = oPos.immutable();
 				if (!HashMapFunctions.computeIfAbsent(Variables.processTickLeaves, level, k -> new CopyOnWriteArrayList<>()).contains(addPos)) {
 					Variables.processTickLeaves.get(level).add(addPos);
