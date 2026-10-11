@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class TreeProcessing {
-	public static int isTreeAndReturnLogAmount(Level level, BlockPos pos) {
+	public static int isTreeAndReturnLogAmount(Level level, BlockPos pos, Block logType) {
 		int leafcount = 8;
 		int logCount = 0;
 		int prevleafcount = -1;
@@ -38,7 +38,7 @@ public class TreeProcessing {
 			for (BlockPos npos : BlockPos.betweenClosed(pos.getX()-2, pos.getY()+(y-1), pos.getZ()-2, pos.getX()+2, pos.getY()+(y-1), pos.getZ()+2)) {
 				BlockState nblockState = level.getBlockState(npos);
 				Block nblock = nblockState.getBlock();
-				if (Util.isTreeLeaf(nblock)) {
+				if (Util.isTreeLeafOf(nblock, logType)) {
 					if (ConfigHandler.ignorePlayerMadeTrees && isPersistentLeaf(nblockState)) {
 						return -1;
 					}

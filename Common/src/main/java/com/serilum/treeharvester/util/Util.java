@@ -41,6 +41,21 @@ public class Util {
 		}
 		return isGiantMushroomLeafBlock(block);
 	}
+	public static boolean isTreeLeafOf(Block leaf, Block log) {
+		if (isGiantMushroomStemBlock(log)) {
+			return isGiantMushroomLeafBlock(leaf);
+		}
+		if (isNetherTreeLeaf(leaf)) {
+			return ConfigHandler.enableNetherTrees && isNetherStem(log);
+		}
+		return isTreeLeaf(leaf) && !isGiantMushroomLeafBlock(leaf);
+	}
+
+	// Overworld logs burn, so a nether wart or shroomlight ceiling above a wooden build never counts as their leaves.
+	private static boolean isNetherStem(Block log) {
+		BlockState defaultState = log.defaultBlockState();
+		return defaultState.is(BlockTags.LOGS) && !defaultState.is(BlockTags.LOGS_THAT_BURN);
+	}
 
 	// Stone pillars like deepslate and basalt are RotatedPillarBlocks too, so the fallback only accepts ones mined with an axe.
 	private static boolean isWoodLog(Block block) {
