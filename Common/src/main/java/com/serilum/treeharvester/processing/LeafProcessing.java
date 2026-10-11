@@ -15,13 +15,13 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class LeafProcessing {
-	public static Block getTreeLeafBlock(Level level, BlockPos highestLogPos) {
+	public static Block getTreeLeafBlock(Level level, BlockPos highestLogPos, Block logType) {
 		BlockPos highestLeafPos = highestLogPos.above().immutable();
 		Block highestLeafBlock = level.getBlockState(highestLeafPos).getBlock();
-		if (!Util.isTreeLeaf(highestLeafBlock)) {
+		if (!Util.isTreeLeafOf(highestLeafBlock, logType)) {
 			for (BlockPos aroundPos : BlockPosFunctions.getBlocksAround(highestLeafPos, false)) {
 				Block aroundBlock = level.getBlockState(aroundPos).getBlock();
-				if (Util.isTreeLeaf(aroundBlock)) {
+				if (Util.isTreeLeafOf(aroundBlock, logType)) {
 					highestLeafBlock = aroundBlock;
 					break;
 				}
@@ -85,7 +85,7 @@ public class LeafProcessing {
 				continue;
 			}
 
-			if (!highestLeafBlock.equals(treeBlock) && !Util.isNetherTreeLeaf(highestLeafBlock)) {
+			if (!highestLeafBlock.equals(treeBlock) && !(Util.isNetherTreeLeaf(highestLeafBlock) && Util.isNetherTreeLeaf(treeBlock))) {
 				continue;
 			}
 
