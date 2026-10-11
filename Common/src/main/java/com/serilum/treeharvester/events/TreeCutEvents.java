@@ -71,7 +71,7 @@ public class TreeCutEvents {
 			bpos = temppos.immutable();
 		}
 
-		int logcount = TreeProcessing.isTreeAndReturnLogAmount(level, bpos);
+		int logcount = TreeProcessing.isTreeAndReturnLogAmount(level, bpos, block);
 		if (logcount < 0) {
 			return true;
 		}
@@ -85,7 +85,7 @@ public class TreeCutEvents {
 			}
 		}
 
-		Block leafBlock = LeafProcessing.getTreeLeafBlock(level, highestLogPos);
+		Block leafBlock = LeafProcessing.getTreeLeafBlock(level, highestLogPos, block);
 		TreeProcessing.prepareSaplingReplant(level, bpos, block, leafBlock);
 
 		int durabilitylosecount = (int)Math.ceil(1.0 / ConfigHandler.loseDurabilityModifier);
@@ -152,7 +152,7 @@ public class TreeCutEvents {
 			return digSpeed;
 		}
 
-		HarvestAttempt attempt = getOrStartHarvestAttempt(level, player, bpos);
+		HarvestAttempt attempt = getOrStartHarvestAttempt(level, player, bpos, block);
 		if (!attempt.isTreeHarvest || attempt.logCount <= 0) {
 			return digSpeed;
 		}
@@ -161,7 +161,7 @@ public class TreeCutEvents {
 	}
 
 	// The harvest mode is locked when a log starts being broken, so toggling sneak halfway cannot skip the extra harvesting time.
-	private static HarvestAttempt getOrStartHarvestAttempt(Level level, Player player, BlockPos bpos) {
+	private static HarvestAttempt getOrStartHarvestAttempt(Level level, Player player, BlockPos bpos, Block block) {
 		Pair<Level, Player> attemptKey = new Pair<Level, Player>(level, player);
 
 		HarvestAttempt attempt = Variables.harvestAttempts.get(attemptKey);
@@ -174,7 +174,7 @@ public class TreeCutEvents {
 
 		int logCount = -1;
 		if (isTreeHarvest) {
-			logCount = TreeProcessing.isTreeAndReturnLogAmount(level, bpos);
+			logCount = TreeProcessing.isTreeAndReturnLogAmount(level, bpos, block);
 		}
 
 		attempt = new HarvestAttempt(bpos.immutable(), isTreeHarvest, logCount, player.tickCount);
