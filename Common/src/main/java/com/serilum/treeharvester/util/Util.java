@@ -10,6 +10,7 @@ import com.serilum.treeharvester.processing.AxeBlacklist;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
+import net.minecraft.tags.BlockItemTags;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -39,6 +40,21 @@ public class Util {
 			return true;
 		}
 		return isGiantMushroomLeafBlock(block);
+	}
+	public static boolean isTreeLeafOf(Block leaf, Block log) {
+		if (isGiantMushroomStemBlock(log)) {
+			return isGiantMushroomLeafBlock(leaf);
+		}
+		if (isNetherTreeLeaf(leaf)) {
+			return ConfigHandler.enableNetherTrees && isNetherStem(log);
+		}
+		return isTreeLeaf(leaf) && !isGiantMushroomLeafBlock(leaf);
+	}
+
+	// Overworld logs burn, so a nether wart or shroomlight ceiling above a wooden build never counts as their leaves.
+	private static boolean isNetherStem(Block log) {
+		BlockState defaultState = log.defaultBlockState();
+		return defaultState.is(BlockTags.LOGS) && !defaultState.is(BlockItemTags.LOGS_THAT_BURN.block());
 	}
 
 	// Stone pillars like deepslate and basalt are RotatedPillarBlocks too, so the fallback only accepts ones mined with an axe.
