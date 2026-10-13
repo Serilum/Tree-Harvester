@@ -2,6 +2,7 @@ package com.serilum.treeharvester.events;
 
 import com.mojang.datafixers.util.Pair;
 import com.natamus.collective.functions.BlockFunctions;
+import com.natamus.collective.services.Services;
 import com.serilum.treeharvester.config.ConfigHandler;
 import com.serilum.treeharvester.data.HarvestAttempt;
 import com.serilum.treeharvester.data.Variables;
@@ -9,6 +10,7 @@ import com.serilum.treeharvester.processing.LeafProcessing;
 import com.serilum.treeharvester.processing.TreeProcessing;
 import com.serilum.treeharvester.util.Util;
 import net.minecraft.core.BlockPos;
+import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
@@ -24,10 +26,11 @@ import java.util.List;
 
 public class TreeCutEvents {
 	public static boolean onTreeHarvest(Level level, Player player, BlockPos bpos, BlockState state, BlockEntity blockEntity) {
-		if (level.isClientSide()) {
+		if (level.isClientSide() || Variables.isHarvestingTree) {
 			return true;
 		}
 
+		BlockPos brokenPos = bpos.immutable();
 		Pair<Level, Player> attemptKey = new Pair<Level, Player>(level, player);
 		HarvestAttempt attempt = Variables.harvestAttempts.remove(attemptKey);
 
@@ -78,6 +81,22 @@ public class TreeCutEvents {
 
 		List<BlockPos> logsToBreak = TreeProcessing.getLogsToBreak(level, bpos, block);
 
+		Variables.isHarvestingTree = true;
+		try {
+			if (!logsToBreak.isEmpty() && !isBreakAllowed(level, player, brokenPos, state)) {
+				return false;
+			}
+
+			harvestTree(level, player, bpos, brokenPos, block, logsToBreak);
+		}
+		finally {
+			Variables.isHarvestingTree = false;
+		}
+
+		return logsToBreak.size() == 0;
+	}
+
+	private static void harvestTree(Level level, Player player, BlockPos bpos, BlockPos brokenPos, Block block, List<BlockPos> logsToBreak) {
 		BlockPos highestLogPos = bpos.immutable();
 		for (BlockPos logpos : logsToBreak) {
 			if (logpos.getY() > highestLogPos.getY()) {
@@ -94,9 +113,33 @@ public class TreeCutEvents {
 		ItemStack hand = player.getItemInHand(InteractionHand.MAIN_HAND);
 		ItemStack harvestTool = hand.copy();
 		for (BlockPos logpos : logsToBreak) {
-			BlockFunctions.dropBlock(level, logpos, player, hand);
+			if (!level.mayInteract(player, logpos)) {
+				continue;
+			}
+
+			BlockState logState = level.getBlockState(logpos);
+			if (!logpos.equals(brokenPos) && !isBreakAllowed(level, player, logpos, logState)) {
+				continue;
+			}
+
+			if (!level.getBlockState(logpos).equals(logState)) {
+				continue;
+			}
+
+			if (player.isCreative()) {
+				level.removeBlock(logpos, false);
+			}
+			else {
+				BlockFunctions.dropBlock(level, logpos, player, hand);
+			}
+
+			if (ConfigHandler.triggerBlockBreakEventPerHarvestedLog) {
+				Services.EVENTTRIGGER.triggerAfterBlockBreakEvent(level, player, logpos, logState, null);
+			}
 
 			if (!player.isCreative()) {
+				player.awardStat(Stats.BLOCK_MINED.get(logState.getBlock()));
+
 				if (ConfigHandler.loseDurabilityPerHarvestedLog) {
 					if (durabilitystartcount == -1) {
 						durabilitystartcount = durabilitylosecount;
@@ -120,8 +163,13 @@ public class TreeCutEvents {
 		if (ConfigHandler.enableFastLeafDecay) {
 			LeafProcessing.breakTreeLeaves(level, logsToBreak, bpos, highestLogPos, leafBlock, harvestTool);
 		}
+	}
 
-		return logsToBreak.size() == 0;
+	private static boolean isBreakAllowed(Level level, Player player, BlockPos pos, BlockState state) {
+		if (!ConfigHandler.triggerBlockBreakEventPerHarvestedLog) {
+			return true;
+		}
+		return Services.EVENTTRIGGER.triggerBlockBreakEvent(level, player, pos, state);
 	}
 
 	private static void damageAxe(ItemStack hand, Player player) {
@@ -178,6 +226,7 @@ public class TreeCutEvents {
 		}
 
 		attempt = new HarvestAttempt(bpos.immutable(), isTreeHarvest, logCount, player.tickCount);
+		Variables.harvestAttempts.keySet().removeIf(key -> key.getSecond().isRemoved());
 		Variables.harvestAttempts.put(attemptKey, attempt);
 		return attempt;
 	}
