@@ -11,12 +11,14 @@ public class ConfigHandler extends DuskConfig {
 	public static HashMap<String, List<String>> configMetaData = new HashMap<String, List<String>>();
 
 	@Entry public static boolean mustHoldAxeForTreeHarvest = true;
+	@Entry public static String axeWhitelist = "easy_emerald:*_paxel,piercingpaxels:*_paxel,randomisfits:*_multitool,tetra:modular_double";
 	@Entry public static boolean treeHarvestWithoutSneak = false;
 	@Entry public static boolean automaticallyFindBottomBlock = true;
 	@Entry public static boolean enableFastLeafDecay = true;
 	@Entry public static boolean enableNetherTrees = true;
 	@Entry public static boolean enableHugeMushrooms = true;
 	@Entry public static boolean ignorePlayerMadeTrees = true;
+	@Entry public static String logBlockBlacklist = "";
 	@Entry public static boolean replaceSaplingOnTreeHarvest = true;
 	@Entry public static boolean replaceMushroomOnMushroomHarvest = true;
 	@Entry public static boolean loseDurabilityPerHarvestedLog = true;
@@ -28,10 +30,14 @@ public class ConfigHandler extends DuskConfig {
 	@Entry(min = 0.01, max = 10.0) public static double increasedHarvestingTimePerLogModifier = 0.2;
 	@Entry(min = 1, max = 16) public static int amountOfLeavesBrokenPerTick = 5;
 	@Entry(min = -1, max = 100000) public static int maxAmountOfLogsBrokenPerHarvest = -1;
+	@Entry public static boolean triggerBlockBreakEventPerHarvestedLog = true;
 
 	public static void initConfig() {
 		configMetaData.put("mustHoldAxeForTreeHarvest", Arrays.asList(
 			"If enabled, tree harvesting only works when a player is holding an axe in the main hand."
+		));
+		configMetaData.put("axeWhitelist", Arrays.asList(
+			"A comma separated list of item ids that can harvest trees too, for modded tools that are not detected as an axe, like paxels and multitools. Use * as a wildcard. An id without a namespace matches items of every mod. Applies after rejoining the world."
 		));
 		configMetaData.put("treeHarvestWithoutSneak", Arrays.asList(
 			"If enabled, tree harvesting works when not holding the sneak button. If disabled it's reversed, and only works when sneaking."
@@ -50,6 +56,9 @@ public class ConfigHandler extends DuskConfig {
 		));
 		configMetaData.put("ignorePlayerMadeTrees", Arrays.asList(
 			"If enabled, trees with leaves placed by players won't be destroyed."
+		));
+		configMetaData.put("logBlockBlacklist", Arrays.asList(
+			"A comma separated list of block ids that are never harvested as a tree, also when they're detected as a log. Use * as a wildcard. An id without a namespace matches blocks of every mod. For example 'minecraft:jungle_log,*crimson_stem'. Applies after rejoining the world."
 		));
 		configMetaData.put("replaceSaplingOnTreeHarvest", Arrays.asList(
 			"If enabled, automatically replaces the sapling from the drops when a tree is harvested."
@@ -83,6 +92,9 @@ public class ConfigHandler extends DuskConfig {
 		));
 		configMetaData.put("maxAmountOfLogsBrokenPerHarvest", Arrays.asList(
 			"The maximum amount of logs broken in one harvest. The logs closest to the broken log go first, so a bigger tree is only partly felled. Useful against lag from huge modded trees or forests with connected logs. -1 means no limit."
+		));
+		configMetaData.put("triggerBlockBreakEventPerHarvestedLog", Arrays.asList(
+			"If enabled, every harvested log in a tree triggers a block break event, as if broken by hand. This lets other mods see each log, like skill mods that give experience for chopping or claim mods that protect an area. A log is skipped when another mod cancels its event."
 		));
 
 		DuskConfig.init(Reference.NAME, Reference.MOD_ID, ConfigHandler.class);
