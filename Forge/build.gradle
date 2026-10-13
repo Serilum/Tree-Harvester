@@ -54,7 +54,7 @@ minecraft {
             mods {
                 modServerRun {
                     source sourceSets.main
-                    source project(":Common").sourceSets.main
+                    // source project(":Common").sourceSets.main
                 }
             }
         }
@@ -69,7 +69,7 @@ minecraft {
             mods {
                 modDataRun {
                     source sourceSets.main
-                    source project(":Common").sourceSets.main
+                    // source project(":Common").sourceSets.main
                 }
             }
         }
@@ -109,6 +109,11 @@ sourceSets.each {
 
 processResources {
     from project(":Common").sourceSets.main.resources
+    def forgeMixinLevel = "JAVA_17"
+    inputs.property("forgeMixinLevel", forgeMixinLevel)
+    filesMatching("${mod_id}.mixins.json") {
+        filter { line -> line.replaceAll(/"compatibilityLevel": "JAVA_\d+"/, "\"compatibilityLevel\": \"${forgeMixinLevel}\"") }
+    }
 }
 
 jar {
