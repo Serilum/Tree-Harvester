@@ -11,14 +11,14 @@ public class ConfigHandler extends DuskConfig {
 	public static HashMap<String, List<String>> configMetaData = new HashMap<String, List<String>>();
 
 	@Entry public static boolean mustHoldAxeForTreeHarvest = true;
-	@Entry public static String axeWhitelist = "easy_emerald:*_paxel,piercingpaxels:*_paxel,randomisfits:*_multitool,tetra:modular_double";
+	@Entry(registry = "item", filter = "tools") public static String axeWhitelist = "easy_emerald:*_paxel,piercingpaxels:*_paxel,randomisfits:*_multitool,tetra:modular_double";
 	@Entry public static boolean treeHarvestWithoutSneak = false;
 	@Entry public static boolean automaticallyFindBottomBlock = true;
 	@Entry public static boolean enableFastLeafDecay = true;
 	@Entry public static boolean enableNetherTrees = true;
 	@Entry public static boolean enableHugeMushrooms = true;
 	@Entry public static boolean ignorePlayerMadeTrees = true;
-	@Entry public static String logBlockBlacklist = "";
+	@Entry(registry = "block", filter = "logs") public static String logBlockBlacklist = "";
 	@Entry public static boolean replaceSaplingOnTreeHarvest = true;
 	@Entry public static boolean replaceMushroomOnMushroomHarvest = true;
 	@Entry public static boolean loseDurabilityPerHarvestedLog = true;
