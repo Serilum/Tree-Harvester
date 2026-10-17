@@ -1,8 +1,8 @@
 package com.serilum.treeharvester.processing;
 
+import com.natamus.collective.functions.ConfigFunctions;
 import com.serilum.treeharvester.config.ConfigHandler;
 import com.serilum.treeharvester.data.Variables;
-import com.serilum.treeharvester.util.Util;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
@@ -19,7 +19,7 @@ public class ConfigLists {
 		Set<Item> whitelistedAxes = new HashSet<>();
 		for (Item item : itemRegistry) {
 			ResourceLocation rl = itemRegistry.getKey(item);
-			if (rl != null && Util.isInIdList(ConfigHandler.axeWhitelist, rl.toString())) {
+			if (rl != null && ConfigFunctions.isInIdList(ConfigHandler.axeWhitelist, rl.toString())) {
 				whitelistedAxes.add(item);
 			}
 		}
@@ -28,7 +28,7 @@ public class ConfigLists {
 		Set<Block> blacklistedLogBlocks = new HashSet<>();
 		for (Block block : blockRegistry) {
 			ResourceLocation rl = blockRegistry.getKey(block);
-			if (rl != null && Util.isInIdList(ConfigHandler.logBlockBlacklist, rl.toString())) {
+			if (rl != null && ConfigFunctions.isInIdList(ConfigHandler.logBlockBlacklist, rl.toString())) {
 				blacklistedLogBlocks.add(block);
 			}
 		}

@@ -21,8 +21,6 @@ import net.minecraft.world.level.material.MapColor;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
-import java.util.regex.Pattern;
 
 public class Util {
 	public static boolean isTreeLog(Block block) {
@@ -91,31 +89,6 @@ public class Util {
 			return false;
 		}
 		return !AxeBlacklist.isBlacklisted(hand.getItem());
-	}
-
-	public static boolean isInIdList(String idList, String id) {
-		String idPath = id.substring(id.indexOf(':') + 1);
-
-		for (String rawEntry : idList.split(",")) {
-			String entry = rawEntry.strip().toLowerCase(Locale.ROOT);
-			if (entry.isEmpty()) {
-				continue;
-			}
-
-			String comparedId = idPath;
-			if (entry.contains(":")) {
-				comparedId = id;
-			}
-
-			if (comparedId.matches(wildcardToRegex(entry))) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	private static String wildcardToRegex(String entry) {
-		return Pattern.quote(entry).replace("*", "\\E.*\\Q");
 	}
 
 	// A client predicts the log break speed, so it has to use the server's settings instead of its own config file.
