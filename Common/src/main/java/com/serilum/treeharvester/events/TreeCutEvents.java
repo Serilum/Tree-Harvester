@@ -12,7 +12,6 @@ import com.serilum.treeharvester.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -80,6 +79,9 @@ public class TreeCutEvents {
 		}
 
 		List<BlockPos> logsToBreak = TreeProcessing.getLogsToBreak(level, bpos, block);
+		if (ConfigHandler.ignorePlayerMadeTrees && Util.isConnectedToBuilding(level, logsToBreak)) {
+			return true;
+		}
 
 		Variables.isHarvestingTree = true;
 		try {
@@ -143,13 +145,13 @@ public class TreeCutEvents {
 				if (ConfigHandler.loseDurabilityPerHarvestedLog) {
 					if (durabilitystartcount == -1) {
 						durabilitystartcount = durabilitylosecount;
-						damageAxe(hand, player);
+						damageAxe(level, player, hand, logpos, logState);
 					}
 					else {
 						durabilitylosecount -= 1;
 
 						if (durabilitylosecount == 0) {
-							damageAxe(hand, player);
+							damageAxe(level, player, hand, logpos, logState);
 							durabilitylosecount = durabilitystartcount;
 						}
 					}
@@ -172,11 +174,11 @@ public class TreeCutEvents {
 		return Services.EVENTTRIGGER.triggerBlockBreakEvent(level, player, pos, state);
 	}
 
-	private static void damageAxe(ItemStack hand, Player player) {
+	private static void damageAxe(Level level, Player player, ItemStack hand, BlockPos logPos, BlockState logState) {
 		if (ConfigHandler.preventAxeBreakingOnTreeHarvest && Util.isAtLastDurability(hand)) {
 			return;
 		}
-		hand.hurtAndBreak(1, player, (Player brokenBy) -> brokenBy.broadcastBreakEvent(EquipmentSlot.MAINHAND));
+		hand.mineBlock(level, logState, logPos, player);
 	}
 
 	public static float onHarvestBreakSpeed(Level level, Player player, float digSpeed, BlockState state) {

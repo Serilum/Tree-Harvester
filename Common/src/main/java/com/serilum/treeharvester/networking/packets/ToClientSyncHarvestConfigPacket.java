@@ -12,32 +12,36 @@ public class ToClientSyncHarvestConfigPacket {
 	public static final ResourceLocation CHANNEL = new ResourceLocation(Reference.MOD_ID, "to_client_sync_harvest_config_packet");
 
 	private final boolean treeHarvestWithoutSneak;
+	private final boolean treeHarvestIgnoresSneak;
 	private final boolean mustHoldAxeForTreeHarvest;
 	private final boolean increaseHarvestingTimePerLog;
 	private final double increasedHarvestingTimePerLogModifier;
 
-	public ToClientSyncHarvestConfigPacket(boolean treeHarvestWithoutSneakIn, boolean mustHoldAxeForTreeHarvestIn, boolean increaseHarvestingTimePerLogIn, double increasedHarvestingTimePerLogModifierIn) {
+	public ToClientSyncHarvestConfigPacket(boolean treeHarvestWithoutSneakIn, boolean treeHarvestIgnoresSneakIn, boolean mustHoldAxeForTreeHarvestIn, boolean increaseHarvestingTimePerLogIn, double increasedHarvestingTimePerLogModifierIn) {
 		this.treeHarvestWithoutSneak = treeHarvestWithoutSneakIn;
+		this.treeHarvestIgnoresSneak = treeHarvestIgnoresSneakIn;
 		this.mustHoldAxeForTreeHarvest = mustHoldAxeForTreeHarvestIn;
 		this.increaseHarvestingTimePerLog = increaseHarvestingTimePerLogIn;
 		this.increasedHarvestingTimePerLogModifier = increasedHarvestingTimePerLogModifierIn;
 	}
 
 	public static ToClientSyncHarvestConfigPacket fromServerConfig() {
-		return new ToClientSyncHarvestConfigPacket(ConfigHandler.treeHarvestWithoutSneak, ConfigHandler.mustHoldAxeForTreeHarvest, ConfigHandler.increaseHarvestingTimePerLog, ConfigHandler.increasedHarvestingTimePerLogModifier);
+		return new ToClientSyncHarvestConfigPacket(ConfigHandler.treeHarvestWithoutSneak, ConfigHandler.treeHarvestIgnoresSneak, ConfigHandler.mustHoldAxeForTreeHarvest, ConfigHandler.increaseHarvestingTimePerLog, ConfigHandler.increasedHarvestingTimePerLogModifier);
 	}
 
 	public static ToClientSyncHarvestConfigPacket decode(FriendlyByteBuf buf) {
 		boolean treeHarvestWithoutSneakIn = buf.readBoolean();
+		boolean treeHarvestIgnoresSneakIn = buf.readBoolean();
 		boolean mustHoldAxeForTreeHarvestIn = buf.readBoolean();
 		boolean increaseHarvestingTimePerLogIn = buf.readBoolean();
 		double increasedHarvestingTimePerLogModifierIn = buf.readDouble();
 
-		return new ToClientSyncHarvestConfigPacket(treeHarvestWithoutSneakIn, mustHoldAxeForTreeHarvestIn, increaseHarvestingTimePerLogIn, increasedHarvestingTimePerLogModifierIn);
+		return new ToClientSyncHarvestConfigPacket(treeHarvestWithoutSneakIn, treeHarvestIgnoresSneakIn, mustHoldAxeForTreeHarvestIn, increaseHarvestingTimePerLogIn, increasedHarvestingTimePerLogModifierIn);
 	}
 
 	public void encode(FriendlyByteBuf buf) {
 		buf.writeBoolean(treeHarvestWithoutSneak);
+		buf.writeBoolean(treeHarvestIgnoresSneak);
 		buf.writeBoolean(mustHoldAxeForTreeHarvest);
 		buf.writeBoolean(increaseHarvestingTimePerLog);
 		buf.writeDouble(increasedHarvestingTimePerLogModifier);
@@ -48,6 +52,7 @@ public class ToClientSyncHarvestConfigPacket {
 			ToClientSyncHarvestConfigPacket packet = ctx.message();
 
 			Variables.serverTreeHarvestWithoutSneak = packet.treeHarvestWithoutSneak;
+			Variables.serverTreeHarvestIgnoresSneak = packet.treeHarvestIgnoresSneak;
 			Variables.serverMustHoldAxeForTreeHarvest = packet.mustHoldAxeForTreeHarvest;
 			Variables.serverIncreaseHarvestingTimePerLog = packet.increaseHarvestingTimePerLog;
 			Variables.serverIncreasedHarvestingTimePerLogModifier = packet.increasedHarvestingTimePerLogModifier;
