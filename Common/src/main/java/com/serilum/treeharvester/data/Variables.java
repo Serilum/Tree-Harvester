@@ -26,6 +26,7 @@ public class Variables {
 
 	public static boolean receivedServerHarvestConfig = false;
 	public static boolean serverTreeHarvestWithoutSneak = false;
+	public static boolean serverTreeHarvestIgnoresSneak = false;
 	public static boolean serverMustHoldAxeForTreeHarvest = true;
 	public static boolean serverIncreaseHarvestingTimePerLog = true;
 	public static double serverIncreasedHarvestingTimePerLogModifier = 0.2;
