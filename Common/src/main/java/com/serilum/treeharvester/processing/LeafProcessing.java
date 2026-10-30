@@ -8,9 +8,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -73,6 +76,7 @@ public class LeafProcessing {
 		}
 		Collections.shuffle(treeBlocks);
 
+		List<BlockPos> queuedMushroomCaps = new ArrayList<>();
 		for (BlockPos treeBlockPos : treeBlocks) {
 			if (!level.isLoaded(treeBlockPos)) {
 				continue;
@@ -95,11 +99,53 @@ public class LeafProcessing {
 				}
 			}
 
-			if (!Variables.processBreakLeaves.get(level).contains(treeBlockPos)) {
-				Variables.processBreakLeaves.get(level).add(treeBlockPos);
-				Variables.leafHarvestTools.put(treeBlockPos, harvestTool);
+			if (highestLeafIsMushroom) {
+				queuedMushroomCaps.add(treeBlockPos);
+			}
+			queueLeafBreak(level, treeBlockPos, harvestTool);
+		}
+
+		if (highestLeafIsMushroom) {
+			int capReach = 8;
+			BoundingBox capArea = new BoundingBox(lowestX - capReach, lowestCenterLogPos.getY() - 1, lowestZ - capReach, highestX + capReach, highestLogPos.getY() + 5, highestZ + capReach);
+			for (BlockPos capPos : getConnectedMushroomCaps(level, queuedMushroomCaps, highestLeafBlock, capArea)) {
+				queueLeafBreak(level, capPos, harvestTool);
 			}
 		}
+	}
+
+	private static void queueLeafBreak(Level level, BlockPos leafPos, ItemStack harvestTool) {
+		if (!Variables.processBreakLeaves.get(level).contains(leafPos)) {
+			Variables.processBreakLeaves.get(level).add(leafPos);
+			Variables.leafHarvestTools.put(leafPos, harvestTool);
+		}
+	}
+
+	private static List<BlockPos> getConnectedMushroomCaps(Level level, List<BlockPos> startCaps, Block capBlock, BoundingBox capArea) {
+		List<BlockPos> connectedCaps = new ArrayList<>();
+		HashSet<BlockPos> checkedPositions = new HashSet<>(startCaps);
+		ArrayDeque<BlockPos> capsToCheckAround = new ArrayDeque<>(startCaps);
+
+		while (!capsToCheckAround.isEmpty()) {
+			BlockPos checkPos = capsToCheckAround.poll();
+			for (BlockPos aroundPos : BlockPos.betweenClosed(checkPos.offset(-1, -1, -1), checkPos.offset(1, 1, 1))) {
+				if (!capArea.isInside(aroundPos) || checkedPositions.contains(aroundPos)) {
+					continue;
+				}
+
+				BlockPos capPos = aroundPos.immutable();
+				checkedPositions.add(capPos);
+
+				if (!level.getBlockState(capPos).getBlock().equals(capBlock) || hasLogsWithinDistance(level, capPos, 2)) {
+					continue;
+				}
+
+				connectedCaps.add(capPos);
+				capsToCheckAround.add(capPos);
+			}
+		}
+
+		return connectedCaps;
 	}
 
 	private static boolean hasLogsWithinDistance(Level level, BlockPos checkPos, int distance) {
