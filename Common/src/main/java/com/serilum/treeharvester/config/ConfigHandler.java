@@ -13,6 +13,7 @@ public class ConfigHandler extends DuskConfig {
 	@Entry public static boolean mustHoldAxeForTreeHarvest = true;
 	@Entry(registry = "item", filter = "tools") public static String axeWhitelist = "easy_emerald:*_paxel,piercingpaxels:*_paxel,randomisfits:*_multitool,tetra:modular_double";
 	@Entry public static boolean treeHarvestWithoutSneak = false;
+	@Entry public static boolean treeHarvestIgnoresSneak = false;
 	@Entry public static boolean automaticallyFindBottomBlock = true;
 	@Entry public static boolean enableFastLeafDecay = true;
 	@Entry public static boolean enableNetherTrees = true;
@@ -42,6 +43,9 @@ public class ConfigHandler extends DuskConfig {
 		configMetaData.put("treeHarvestWithoutSneak", Arrays.asList(
 			"If enabled, tree harvesting works when not holding the sneak button. If disabled it's reversed, and only works when sneaking."
 		));
+		configMetaData.put("treeHarvestIgnoresSneak", Arrays.asList(
+			"If enabled, tree harvesting always works and sneaking has no effect, so a tree can't be broken one log at a time. Overrides 'treeHarvestWithoutSneak'."
+		));
 		configMetaData.put("automaticallyFindBottomBlock", Arrays.asList(
 			"Whether the mod should attempt to find the actual bottom log of the tree and start there. This means you can break a tree in the middle and it will still completely be felled."
 		));
@@ -55,7 +59,7 @@ public class ConfigHandler extends DuskConfig {
 			"If enabled, giant/huge mushrooms will also be chopped down quickly."
 		));
 		configMetaData.put("ignorePlayerMadeTrees", Arrays.asList(
-			"If enabled, trees with leaves placed by players won't be destroyed."
+			"If enabled, trees with leaves placed by players, or trees connected to a player-made build, won't be destroyed."
 		));
 		configMetaData.put("logBlockBlacklist", Arrays.asList(
 			"A comma separated list of block ids that are never harvested as a tree, also when they're detected as a log. Use * as a wildcard. An id without a namespace matches blocks of every mod. For example 'minecraft:jungle_log,*crimson_stem'. Applies after rejoining the world."

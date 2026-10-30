@@ -8,11 +8,14 @@ import com.serilum.treeharvester.config.ConfigHandler;
 import com.serilum.treeharvester.data.Variables;
 import com.serilum.treeharvester.processing.AxeBlacklist;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
@@ -20,6 +23,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 public class Util {
@@ -73,6 +77,9 @@ public class Util {
 	}
 
 	public static boolean isTreeHarvestMode(Player player) {
+		if (treeHarvestIgnoresSneak(player.level())) {
+			return true;
+		}
 		if (treeHarvestWithoutSneak(player.level())) {
 			return !player.isCrouching();
 		}
@@ -97,6 +104,13 @@ public class Util {
 			return Variables.serverTreeHarvestWithoutSneak;
 		}
 		return ConfigHandler.treeHarvestWithoutSneak;
+	}
+
+	public static boolean treeHarvestIgnoresSneak(Level level) {
+		if (level.isClientSide && Variables.receivedServerHarvestConfig) {
+			return Variables.serverTreeHarvestIgnoresSneak;
+		}
+		return ConfigHandler.treeHarvestIgnoresSneak;
 	}
 
 	public static boolean mustHoldAxeForTreeHarvest(Level level) {
@@ -162,7 +176,7 @@ public class Util {
 	}
 
 	public static boolean isNetherTreeLeaf(Block block) {
-		return block.equals(Blocks.NETHER_WART_BLOCK) || block.equals(Blocks.WARPED_WART_BLOCK) || block.equals(Blocks.SHROOMLIGHT);
+		return block.defaultBlockState().is(BlockTags.WART_BLOCKS) || block.equals(Blocks.SHROOMLIGHT);
 	}
 	public static boolean isTreeRoot(Block block) {
 		return block instanceof MangroveRootsBlock;
@@ -180,8 +194,7 @@ public class Util {
 		if (!ConfigHandler.enableHugeMushrooms) {
 			return false;
 		}
-		MapColor materialcolour = block.defaultMapColor();
-		return block instanceof HugeMushroomBlock && (materialcolour.equals(MapColor.COLOR_RED) || materialcolour.equals(MapColor.DIRT));
+		return block instanceof HugeMushroomBlock && !block.defaultMapColor().equals(MapColor.WOOL);
 	}
 
 	public static boolean isMangroveRootOrLog(Block block) {
@@ -203,8 +216,56 @@ public class Util {
 
 		String oneIdentifier = one.getName().getString().split(" ")[0];
 		String twoIdentifier = two.getName().getString().split(" ")[0];
+		if (oneIdentifier.equals(twoIdentifier)) {
+			return true;
+		}
 
-		return oneIdentifier.equals(twoIdentifier);
+		return shareWoodTypeTag(one, two);
+	}
+
+	private static boolean shareWoodTypeTag(Block one, Block two) {
+		BlockState twoState = two.defaultBlockState();
+		Iterator<TagKey<Block>> oneBlockTags = one.defaultBlockState().getTags().iterator();
+		while (oneBlockTags.hasNext()) {
+			TagKey<Block> tag = oneBlockTags.next();
+			if (isWoodTypeTagOf(tag.location().getPath(), one, two) && twoState.is(tag)) {
+				return true;
+			}
+		}
+
+		ItemStack twoStack = new ItemStack(two);
+		Iterator<TagKey<Item>> oneItemTags = new ItemStack(one).getTags().iterator();
+		while (oneItemTags.hasNext()) {
+			TagKey<Item> tag = oneItemTags.next();
+			if (isWoodTypeTagOf(tag.location().getPath(), one, two) && twoStack.is(tag)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private static boolean isWoodTypeTagOf(String tagPath, Block one, Block two) {
+		if (!tagPath.endsWith("_logs")) {
+			return false;
+		}
+
+		String woodType = tagPath.substring(0, tagPath.length() - "_logs".length());
+		return one.getDescriptionId().contains(woodType) && two.getDescriptionId().contains(woodType);
+	}
+
+	public static boolean isConnectedToBuilding(Level level, List<BlockPos> logPositions) {
+		for (BlockPos logPos : logPositions) {
+			for (Direction direction : Direction.values()) {
+				if (isBuildingBlock(level.getBlockState(logPos.relative(direction)))) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	private static boolean isBuildingBlock(BlockState blockState) {
+		return blockState.is(BlockTags.PLANKS) || blockState.is(BlockTags.STAIRS) || blockState.is(BlockTags.SLABS) || blockState.is(BlockTags.DOORS) || blockState.is(BlockTags.TRAPDOORS);
 	}
 
 	public static Pair<Boolean, List<BlockPos>> isConnectedToLogs(Level level, BlockPos startpos) {
