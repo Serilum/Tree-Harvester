@@ -33,8 +33,12 @@ public class LeafEvents {
 			Variables.processBreakLeaves.get(level).remove(leafPos);
 			ItemStack harvestTool = Variables.leafHarvestTools.remove(leafPos);
 
-			if (Util.isTreeLeaf(level.getBlockState(leafPos).getBlock())) {
-				if (harvestTool == null) {
+			BlockState leafState = level.getBlockState(leafPos);
+			if (Util.isTreeLeaf(leafState.getBlock())) {
+				if (Util.shouldDecayLikeVanilla(leafState)) {
+					Util.decayLeaf(level, leafPos, leafState);
+				}
+				else if (harvestTool == null) {
 					BlockFunctions.dropBlock(level, leafPos);
 				}
 				else {
