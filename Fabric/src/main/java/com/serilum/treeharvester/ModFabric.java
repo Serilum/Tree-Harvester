@@ -49,6 +49,7 @@ public class ModFabric implements ModInitializer {
 
 		ServerTickEvents.START_WORLD_TICK.register((ServerLevel level) -> {
 			LeafEvents.onWorldTick(level);
+			PlayerEvents.onWorldTick(level);
 		});
 
 		CollectiveBlockEvents.NEIGHBOUR_NOTIFY.register((Level level, BlockPos pos, BlockState state, EnumSet<Direction> notifiedSides, boolean forceRedstoneUpdate) -> {

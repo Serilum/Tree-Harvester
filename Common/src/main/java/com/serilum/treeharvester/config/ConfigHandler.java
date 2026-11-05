@@ -12,8 +12,8 @@ public class ConfigHandler extends DuskConfig {
 
 	@Entry public static boolean mustHoldAxeForTreeHarvest = true;
 	@Entry(registry = "item", filter = "tools") public static String axeWhitelist = "easy_emerald:*_paxel,piercingpaxels:*_paxel,randomisfits:*_multitool,tetra:modular_double";
-	@Entry public static boolean treeHarvestWithoutSneak = false;
-	@Entry public static boolean treeHarvestIgnoresSneak = false;
+	@Entry public static boolean treeHarvestWithoutCrouching = false;
+	@Entry public static boolean treeHarvestIgnoresCrouching = false;
 	@Entry public static boolean automaticallyFindBottomBlock = true;
 	@Entry public static boolean enableFastLeafDecay = true;
 	@Entry public static boolean enableNetherTrees = true;
@@ -40,11 +40,11 @@ public class ConfigHandler extends DuskConfig {
 		configMetaData.put("axeWhitelist", Arrays.asList(
 			"A comma separated list of item ids that can harvest trees too, for modded tools that are not detected as an axe, like paxels and multitools. Use * as a wildcard. An id without a namespace matches items of every mod. Applies after rejoining the world."
 		));
-		configMetaData.put("treeHarvestWithoutSneak", Arrays.asList(
-			"If enabled, tree harvesting works when not holding the sneak button. If disabled it's reversed, and only works when sneaking."
+		configMetaData.put("treeHarvestWithoutCrouching", Arrays.asList(
+			"If enabled, tree harvesting works when not holding the crouch button. If disabled it's reversed, and only works when crouching."
 		));
-		configMetaData.put("treeHarvestIgnoresSneak", Arrays.asList(
-			"If enabled, tree harvesting always works and sneaking has no effect, so a tree can't be broken one log at a time. Overrides 'treeHarvestWithoutSneak'."
+		configMetaData.put("treeHarvestIgnoresCrouching", Arrays.asList(
+			"If enabled, tree harvesting always works and crouching has no effect, so a tree can't be broken one log at a time. Overrides 'treeHarvestWithoutCrouching'."
 		));
 		configMetaData.put("automaticallyFindBottomBlock", Arrays.asList(
 			"Whether the mod should attempt to find the actual bottom log of the tree and start there. This means you can break a tree in the middle and it will still completely be felled."

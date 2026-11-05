@@ -11,37 +11,37 @@ import net.minecraft.resources.ResourceLocation;
 public class ToClientSyncHarvestConfigPacket {
 	public static final ResourceLocation CHANNEL = ResourceLocation.fromNamespaceAndPath(Reference.MOD_ID, "to_client_sync_harvest_config_packet");
 
-	private final boolean treeHarvestWithoutSneak;
-	private final boolean treeHarvestIgnoresSneak;
+	private final boolean treeHarvestWithoutCrouching;
+	private final boolean treeHarvestIgnoresCrouching;
 	private final boolean mustHoldAxeForTreeHarvest;
 	private final boolean increaseHarvestingTimePerLog;
 	private final double increasedHarvestingTimePerLogModifier;
 
-	public ToClientSyncHarvestConfigPacket(boolean treeHarvestWithoutSneakIn, boolean treeHarvestIgnoresSneakIn, boolean mustHoldAxeForTreeHarvestIn, boolean increaseHarvestingTimePerLogIn, double increasedHarvestingTimePerLogModifierIn) {
-		this.treeHarvestWithoutSneak = treeHarvestWithoutSneakIn;
-		this.treeHarvestIgnoresSneak = treeHarvestIgnoresSneakIn;
+	public ToClientSyncHarvestConfigPacket(boolean treeHarvestWithoutCrouchingIn, boolean treeHarvestIgnoresCrouchingIn, boolean mustHoldAxeForTreeHarvestIn, boolean increaseHarvestingTimePerLogIn, double increasedHarvestingTimePerLogModifierIn) {
+		this.treeHarvestWithoutCrouching = treeHarvestWithoutCrouchingIn;
+		this.treeHarvestIgnoresCrouching = treeHarvestIgnoresCrouchingIn;
 		this.mustHoldAxeForTreeHarvest = mustHoldAxeForTreeHarvestIn;
 		this.increaseHarvestingTimePerLog = increaseHarvestingTimePerLogIn;
 		this.increasedHarvestingTimePerLogModifier = increasedHarvestingTimePerLogModifierIn;
 	}
 
 	public static ToClientSyncHarvestConfigPacket fromServerConfig() {
-		return new ToClientSyncHarvestConfigPacket(ConfigHandler.treeHarvestWithoutSneak, ConfigHandler.treeHarvestIgnoresSneak, ConfigHandler.mustHoldAxeForTreeHarvest, ConfigHandler.increaseHarvestingTimePerLog, ConfigHandler.increasedHarvestingTimePerLogModifier);
+		return new ToClientSyncHarvestConfigPacket(ConfigHandler.treeHarvestWithoutCrouching, ConfigHandler.treeHarvestIgnoresCrouching, ConfigHandler.mustHoldAxeForTreeHarvest, ConfigHandler.increaseHarvestingTimePerLog, ConfigHandler.increasedHarvestingTimePerLogModifier);
 	}
 
 	public static ToClientSyncHarvestConfigPacket decode(FriendlyByteBuf buf) {
-		boolean treeHarvestWithoutSneakIn = buf.readBoolean();
-		boolean treeHarvestIgnoresSneakIn = buf.readBoolean();
+		boolean treeHarvestWithoutCrouchingIn = buf.readBoolean();
+		boolean treeHarvestIgnoresCrouchingIn = buf.readBoolean();
 		boolean mustHoldAxeForTreeHarvestIn = buf.readBoolean();
 		boolean increaseHarvestingTimePerLogIn = buf.readBoolean();
 		double increasedHarvestingTimePerLogModifierIn = buf.readDouble();
 
-		return new ToClientSyncHarvestConfigPacket(treeHarvestWithoutSneakIn, treeHarvestIgnoresSneakIn, mustHoldAxeForTreeHarvestIn, increaseHarvestingTimePerLogIn, increasedHarvestingTimePerLogModifierIn);
+		return new ToClientSyncHarvestConfigPacket(treeHarvestWithoutCrouchingIn, treeHarvestIgnoresCrouchingIn, mustHoldAxeForTreeHarvestIn, increaseHarvestingTimePerLogIn, increasedHarvestingTimePerLogModifierIn);
 	}
 
 	public void encode(FriendlyByteBuf buf) {
-		buf.writeBoolean(treeHarvestWithoutSneak);
-		buf.writeBoolean(treeHarvestIgnoresSneak);
+		buf.writeBoolean(treeHarvestWithoutCrouching);
+		buf.writeBoolean(treeHarvestIgnoresCrouching);
 		buf.writeBoolean(mustHoldAxeForTreeHarvest);
 		buf.writeBoolean(increaseHarvestingTimePerLog);
 		buf.writeDouble(increasedHarvestingTimePerLogModifier);
@@ -51,8 +51,8 @@ public class ToClientSyncHarvestConfigPacket {
 		if (ctx.side().equals(Side.CLIENT)) {
 			ToClientSyncHarvestConfigPacket packet = ctx.message();
 
-			Variables.serverTreeHarvestWithoutSneak = packet.treeHarvestWithoutSneak;
-			Variables.serverTreeHarvestIgnoresSneak = packet.treeHarvestIgnoresSneak;
+			Variables.serverTreeHarvestWithoutCrouching = packet.treeHarvestWithoutCrouching;
+			Variables.serverTreeHarvestIgnoresCrouching = packet.treeHarvestIgnoresCrouching;
 			Variables.serverMustHoldAxeForTreeHarvest = packet.mustHoldAxeForTreeHarvest;
 			Variables.serverIncreaseHarvestingTimePerLog = packet.increaseHarvestingTimePerLog;
 			Variables.serverIncreasedHarvestingTimePerLogModifier = packet.increasedHarvestingTimePerLogModifier;
