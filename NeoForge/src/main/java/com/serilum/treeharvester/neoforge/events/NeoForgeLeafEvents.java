@@ -2,6 +2,7 @@ package com.serilum.treeharvester.neoforge.events;
 
 import com.natamus.collective.functions.WorldFunctions;
 import com.serilum.treeharvester.events.LeafEvents;
+import com.serilum.treeharvester.events.PlayerEvents;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -17,6 +18,7 @@ public class NeoForgeLeafEvents {
 		}
 
 		LeafEvents.onWorldTick((ServerLevel)level);
+		PlayerEvents.onWorldTick((ServerLevel)level);
 	}
 
 	@SubscribeEvent
