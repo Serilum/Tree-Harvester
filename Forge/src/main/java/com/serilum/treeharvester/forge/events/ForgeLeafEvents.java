@@ -2,6 +2,7 @@ package com.serilum.treeharvester.forge.events;
 
 import com.natamus.collective.functions.WorldFunctions;
 import com.serilum.treeharvester.events.LeafEvents;
+import com.serilum.treeharvester.events.PlayerEvents;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.TickEvent;
@@ -24,6 +25,7 @@ public class ForgeLeafEvents {
 		}
 
 		LeafEvents.onWorldTick((ServerLevel)level);
+		PlayerEvents.onWorldTick((ServerLevel)level);
 	}
 
 	@SubscribeEvent

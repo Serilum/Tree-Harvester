@@ -1,16 +1,23 @@
 package com.serilum.treeharvester.util;
 
 import com.mojang.datafixers.util.Pair;
+import com.natamus.collective.features.PlayerPlacedBlocksFeature;
 import com.natamus.collective.functions.BlockPosFunctions;
 import com.natamus.collective.functions.CompareBlockFunctions;
+import com.natamus.collective.implementations.networking.api.Dispatcher;
 import com.natamus.collective.services.Services;
 import com.serilum.treeharvester.config.ConfigHandler;
+import com.serilum.treeharvester.data.HarvestAttempt;
 import com.serilum.treeharvester.data.Variables;
+import com.serilum.treeharvester.networking.packets.ToClientHarvestAttemptPacket;
 import com.serilum.treeharvester.processing.AxeBlacklist;
+import com.serilum.treeharvester.processing.TreeProcessing;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
@@ -25,6 +32,7 @@ import net.minecraft.world.level.material.MapColor;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 public class Util {
 	public static boolean isTreeLog(Block block) {
@@ -77,10 +85,10 @@ public class Util {
 	}
 
 	public static boolean isTreeHarvestMode(Player player) {
-		if (treeHarvestIgnoresSneak(player.level())) {
+		if (treeHarvestIgnoresCrouching(player.level())) {
 			return true;
 		}
-		if (treeHarvestWithoutSneak(player.level())) {
+		if (treeHarvestWithoutCrouching(player.level())) {
 			return !player.isCrouching();
 		}
 		return player.isCrouching();
@@ -99,18 +107,18 @@ public class Util {
 	}
 
 	// A client predicts the log break speed, so it has to use the server's settings instead of its own config file.
-	public static boolean treeHarvestWithoutSneak(Level level) {
+	public static boolean treeHarvestWithoutCrouching(Level level) {
 		if (level.isClientSide() && Variables.receivedServerHarvestConfig) {
-			return Variables.serverTreeHarvestWithoutSneak;
+			return Variables.serverTreeHarvestWithoutCrouching;
 		}
-		return ConfigHandler.treeHarvestWithoutSneak;
+		return ConfigHandler.treeHarvestWithoutCrouching;
 	}
 
-	public static boolean treeHarvestIgnoresSneak(Level level) {
+	public static boolean treeHarvestIgnoresCrouching(Level level) {
 		if (level.isClientSide() && Variables.receivedServerHarvestConfig) {
-			return Variables.serverTreeHarvestIgnoresSneak;
+			return Variables.serverTreeHarvestIgnoresCrouching;
 		}
-		return ConfigHandler.treeHarvestIgnoresSneak;
+		return ConfigHandler.treeHarvestIgnoresCrouching;
 	}
 
 	public static boolean mustHoldAxeForTreeHarvest(Level level) {
@@ -197,6 +205,15 @@ public class Util {
 		return block instanceof HugeMushroomBlock && !block.defaultMapColor().equals(MapColor.WOOL);
 	}
 
+	public static boolean shouldDecayLikeVanilla(BlockState leafState) {
+		return leafState.getBlock() instanceof LeavesBlock && leafState.hasProperty(LeavesBlock.DISTANCE) && Services.MODLOADER.isModLoaded("immersive_weathering");
+	}
+
+	public static void decayLeaf(ServerLevel level, BlockPos leafPos, BlockState leafState) {
+		BlockState decayingState = leafState.setValue(LeavesBlock.DISTANCE, LeavesBlock.DECAY_DISTANCE);
+		decayingState.randomTick(level, leafPos, level.getRandom());
+	}
+
 	public static boolean isMangroveRootOrLog(Block block) {
 		return block instanceof MangroveRootsBlock || block.equals(Blocks.MANGROVE_LOG);
 	}
@@ -251,6 +268,54 @@ public class Util {
 
 		String woodType = tagPath.substring(0, tagPath.length() - "_logs".length());
 		return one.getDescriptionId().contains(woodType) && two.getDescriptionId().contains(woodType);
+	}
+
+	public static boolean isPlayerPlacedLog(Level level, BlockPos logPos) {
+		return ConfigHandler.ignorePlayerMadeTrees && PlayerPlacedBlocksFeature.isPlacedByPlayer(level, logPos);
+	}
+
+	// The harvest mode is locked when a log starts being broken, so crouching or standing up halfway cannot skip the extra harvesting time.
+	public static HarvestAttempt getOrStartHarvestAttempt(Level level, Player player, BlockPos bpos, Block block) {
+		Pair<Level, Player> attemptKey = new Pair<>(level, player);
+
+		HarvestAttempt attempt = Variables.harvestAttempts.get(attemptKey);
+		if (attempt != null && attempt.pos.equals(bpos) && isRecentHarvestAttempt(attempt, player)) {
+			attempt.lastSeenTick = player.tickCount;
+			return attempt;
+		}
+
+		boolean isTreeHarvest = isTreeHarvestMode(player) && isHoldingHarvestAxe(player) && hasDurabilityForHarvest(player) && !isPlayerPlacedLog(level, bpos);
+
+		int logCount = -1;
+		if (isTreeHarvest) {
+			logCount = TreeProcessing.isTreeAndReturnLogAmount(level, bpos, block);
+		}
+
+		attempt = new HarvestAttempt(bpos.immutable(), isTreeHarvest, logCount, player.tickCount);
+		Variables.harvestAttempts.keySet().removeIf(key -> key.getSecond().isRemoved());
+		Variables.harvestAttempts.put(attemptKey, attempt);
+		sendHarvestAttemptToClient(player, attempt);
+		return attempt;
+	}
+
+	// The break speed is checked every tick while a log is being broken, so a longer gap means the player stopped and this is a new attempt.
+	public static boolean isRecentHarvestAttempt(HarvestAttempt attempt, Player player) {
+		return player.tickCount - attempt.lastSeenTick <= 2;
+	}
+
+	public static void sendHarvestAttemptToClient(Player player, HarvestAttempt attempt) {
+		if (player instanceof ServerPlayer serverPlayer) {
+			Dispatcher.sendToClient(ToClientHarvestAttemptPacket.fromAttempt(attempt), serverPlayer);
+		}
+	}
+
+	public static void useServerHarvestAttempt(BlockPos pos, boolean isTreeHarvest, int logCount) {
+		for (Map.Entry<Pair<Level, Player>, HarvestAttempt> entry : Variables.harvestAttempts.entrySet()) {
+			HarvestAttempt clientAttempt = entry.getValue();
+			if (entry.getKey().getFirst().isClientSide() && clientAttempt.pos.equals(pos)) {
+				entry.setValue(new HarvestAttempt(pos, isTreeHarvest, logCount, clientAttempt.lastSeenTick));
+			}
+		}
 	}
 
 	public static boolean isConnectedToBuilding(Level level, List<BlockPos> logPositions) {

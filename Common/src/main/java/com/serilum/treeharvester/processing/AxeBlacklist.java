@@ -25,8 +25,9 @@ public class AxeBlacklist {
 		Variables.processedAxeBlacklist = true;
 		try {
 			setupAxeBlacklist();
-		} catch (IOException ex) {
-			System.out.println("[" + Reference.NAME + "] Something went wrong setting up the axe blacklist file.");
+		}
+		catch (IOException ignored) {
+			Constants.logger.warn("[" + Reference.NAME + "] Something went wrong setting up the axe blacklist file.");
 		}
 	}
 
