@@ -19,6 +19,7 @@ public class ModCommon {
 
 	private static void load() {
 		PlayerPlacedBlocksFeature.trackBlocksMatching(blockState -> Util.isTreeLog(blockState.getBlock()));
+		Util.moveAxeBlacklistFileIntoConfig();
 
 		ConfigCallback.CONFIG_CHANGED.register((String modid) -> {
 			if (!modid.equals(Reference.MOD_ID)) {
