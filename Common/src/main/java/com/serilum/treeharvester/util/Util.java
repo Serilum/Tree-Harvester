@@ -1,16 +1,19 @@
 package com.serilum.treeharvester.util;
 
 import com.mojang.datafixers.util.Pair;
+import com.natamus.collective.config.DuskConfig;
+import com.natamus.collective.config.DuskConfigMigration;
 import com.natamus.collective.features.PlayerPlacedBlocksFeature;
 import com.natamus.collective.functions.BlockPosFunctions;
 import com.natamus.collective.functions.CompareBlockFunctions;
+import com.natamus.collective.functions.ConfigFunctions;
+import com.natamus.collective.functions.ItemFunctions;
 import com.natamus.collective.implementations.networking.api.Dispatcher;
 import com.natamus.collective.services.Services;
 import com.serilum.treeharvester.config.ConfigHandler;
 import com.serilum.treeharvester.data.HarvestAttempt;
 import com.serilum.treeharvester.data.Variables;
 import com.serilum.treeharvester.networking.packets.ToClientHarvestAttemptPacket;
-import com.serilum.treeharvester.processing.AxeBlacklist;
 import com.serilum.treeharvester.processing.TreeProcessing;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -103,7 +106,17 @@ public class Util {
 		if (!Services.TOOLFUNCTIONS.isAxe(hand) && !Variables.whitelistedAxes.contains(hand.getItem())) {
 			return false;
 		}
-		return !AxeBlacklist.isBlacklisted(hand.getItem());
+		return !ConfigFunctions.isInIdList(ConfigHandler.axeBlacklist, ItemFunctions.getItemId(player.level(), hand.getItem()));
+	}
+
+	public static void moveAxeBlacklistFileIntoConfig() {
+		String disabledAxes = DuskConfigMigration.takeDisabledIdsFromFile(Reference.MOD_ID, "harvestable_axe_blacklist.txt");
+		if (disabledAxes == null) {
+			return;
+		}
+
+		ConfigHandler.axeBlacklist = disabledAxes;
+		DuskConfig.write(Reference.MOD_ID);
 	}
 
 	// A client predicts the log break speed, so it has to use the server's settings instead of its own config file.
