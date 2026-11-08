@@ -12,6 +12,7 @@ public class ConfigHandler extends DuskConfig {
 
 	@Entry public static boolean mustHoldAxeForTreeHarvest = true;
 	@Entry(registry = "item", filter = "tools") public static String axeWhitelist = "easy_emerald:*_paxel,piercingpaxels:*_paxel,randomisfits:*_multitool,tetra:modular_double";
+	@Entry(registry = "item", filter = "axes", sync = true) public static String axeBlacklist = "";
 	@Entry public static boolean treeHarvestWithoutCrouching = false;
 	@Entry public static boolean treeHarvestIgnoresCrouching = false;
 	@Entry public static boolean automaticallyFindBottomBlock = true;
@@ -39,6 +40,9 @@ public class ConfigHandler extends DuskConfig {
 		));
 		configMetaData.put("axeWhitelist", Arrays.asList(
 			"A comma separated list of item ids that can harvest trees too, for modded tools that are not detected as an axe, like paxels and multitools. Use * as a wildcard. An id without a namespace matches items of every mod. Applies after rejoining the world."
+		));
+		configMetaData.put("axeBlacklist", Arrays.asList(
+			"A comma separated list of axe ids that can't harvest trees. Use * as a wildcard."
 		));
 		configMetaData.put("treeHarvestWithoutCrouching", Arrays.asList(
 			"If enabled, tree harvesting works when not holding the crouch button. If disabled it's reversed, and only works when crouching."
